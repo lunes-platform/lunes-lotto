@@ -1,0 +1,29 @@
+[package]
+name = "lunes_lotto_pkg"
+version = "0.4.0"
+authors = ["Astar builder"]
+edition = "2021"
+
+[dependencies]
+ink = { version = "~4.2.1", default-features = false}
+ink_prelude = { version = "~3.4.0", default-features = false }
+ink_storage = { version = "4.3.0", default-features = false }
+
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
+scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
+
+openbrush = { tag = "4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = ["psp34", "ownable", "reentrancy_guard"] }
+
+chrono = { version = "0.4", default-features = false }
+
+[lib]
+path = "lib.rs"
+
+[features]
+default = ["std"]
+std = [
+    "ink/std",
+    "scale/std",
+    "scale-info",
+    "openbrush/std",
+]
