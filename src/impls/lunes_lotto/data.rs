@@ -3,7 +3,7 @@ use ink_prelude::vec::Vec;
 
 pub type RaffleId = u64;
 pub type TicketId = u64;
-pub type NumRaffle = Vec<u32>;
+pub type NumRaffle = Vec<u64>;
 pub type DateRaffle = u64;
 pub type Status = bool;
 
@@ -44,12 +44,12 @@ pub struct LunesTicket{
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct ListNumRaffle{
-    pub num_1: u32,
-    pub num_2: u32,
-    pub num_3: u32,
-    pub num_4: u32,
-    pub num_5: u32,
-    pub num_6: u32,
+    pub num_1: u64,
+    pub num_2: u64,
+    pub num_3: u64,
+    pub num_4: u64,
+    pub num_5: u64,
+    pub num_6: u64,
 }
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]

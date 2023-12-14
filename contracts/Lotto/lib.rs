@@ -9,7 +9,7 @@ pub mod lunes_lotto{
         },
         traits::Storage,
     };
-    use lunes_lotto_pkg::impls::lunes_lotto::{ *, lunes_lotto::*, data };
+    use lunes_lotto_pkg::impls::lunes_lotto::{lunes_lotto::*, data };
 
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -33,7 +33,7 @@ pub mod lunes_lotto{
             ownable::InternalImpl::_init_with_owner(&mut instance, caller);
 
             let mut instance = Self::default();
-
+            instance.payable_lotto.next_id = 1;
             instance.payable_lotto.rafflies = Default::default();
             instance.payable_lotto.tickets = Default::default();
             instance

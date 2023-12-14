@@ -1,6 +1,4 @@
-use openbrush::{
-    traits::{AccountId, Balance, String},
-};
+use openbrush::traits::Balance;
 use ink_prelude::vec::Vec;
 
 #[openbrush::wrapper]
