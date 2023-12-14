@@ -3,21 +3,24 @@ use ink_prelude::vec::Vec;
 
 pub type RaffleId = u64;
 pub type TicketId = u64;
-pub type NumRaffle = Vec<u64>;
+pub type NumRaffle = Vec<u32>;
 pub type DateRaffle = u64;
 pub type Status = bool;
 
 pub type Owner = AccountId;
 pub type Price = Balance;
 pub type TotalAccumulated = Balance;
+pub type ValueAward = Balance;
 
 #[derive(Default, Debug)]
 #[openbrush::storage_item]
 pub struct Data {
+    pub next_id: RaffleId,
     pub rafflies: Vec<LunesLotto>,
     pub tickets: Vec<LunesTicket>,
+    pub winners: Vec<LunesTicket>,
 }
-#[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
+#[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct LunesLotto{
     pub raffle_id: RaffleId,
@@ -27,39 +30,41 @@ pub struct LunesLotto{
     pub total_accumulated: TotalAccumulated,
     pub status: Status,
 }
-#[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
+#[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct LunesTicket{
-    pub ticket_id: TicketId,
     pub raffle_id: RaffleId,
     pub game_raffle: NumRaffle,
     pub date_create: u64,
+    pub value_award: ValueAward,
     pub owner: Owner,
+    pub status: Status,
+    
+}
+#[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub struct ListNumRaffle{
+    pub num_1: u32,
+    pub num_2: u32,
+    pub num_3: u32,
+    pub num_4: u32,
+    pub num_5: u32,
+    pub num_6: u32,
 }
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub enum LunesError {
     BadMintValue,
-    CannotMintZeroTokens,
-    CollectionIsFull,
-    TooManyTokensToMint,
-    WithdrawalFailed,
-    BadNotFoundTokenId,
-    BadNotOwnerTokenId,
-    MaxPerMint,
+    DrawNotStarted,
+    WithdrawalFailed
 }
 
 impl LunesError {
     pub fn as_str(&self) -> String {
         match self {
             LunesError::BadMintValue => String::from("BadMintValue"),
-            LunesError::CannotMintZeroTokens => String::from("CannotMintZeroTokens"),
-            LunesError::CollectionIsFull => String::from("CollectionIsFull"),
-            LunesError::TooManyTokensToMint => String::from("TooManyTokensToMint"),
+            LunesError::DrawNotStarted => String::from("DrawNotStarted"),
             LunesError::WithdrawalFailed => String::from("WithdrawalFailed"),
-            LunesError::BadNotFoundTokenId => String::from("BadNotFoundTokenId"),
-            LunesError::BadNotOwnerTokenId => String::from("BadNotOwnerTokenId"),
-            LunesError::MaxPerMint => String::from("MaxPerMint"),
         }
     }
 }
