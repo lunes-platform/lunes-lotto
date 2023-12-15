@@ -56,7 +56,10 @@ pub struct ListNumRaffle{
 pub enum LunesError {
     BadMintValue,
     DrawNotStarted,
-    WithdrawalFailed
+    WithdrawalFailed,
+    NumRepeating,
+    NumInvalid,
+    NumSuper60,
 }
 
 impl LunesError {
@@ -65,6 +68,9 @@ impl LunesError {
             LunesError::BadMintValue => String::from("BadMintValue"),
             LunesError::DrawNotStarted => String::from("DrawNotStarted"),
             LunesError::WithdrawalFailed => String::from("WithdrawalFailed"),
+            LunesError::NumRepeating => String::from("NumRepeating"),
+            LunesError::NumInvalid => String::from("NumInvalid"),
+            LunesError::NumSuper60 => String::from("NumSuper60"),
         }
     }
 }
