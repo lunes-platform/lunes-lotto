@@ -36,7 +36,23 @@ pub mod lunes_lotto{
             instance.payable_lotto.next_id = 1;
             instance.payable_lotto.rafflies = Default::default();
             instance.payable_lotto.tickets = Default::default();
+            instance.payable_lotto.winners = Default::default();
             instance
         }
     }
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        #[ink::test]
+        fn random_lotto() {
+            let mut contract = LunesLottoContract::new();           
+            assert!(contract.random_lotto().is_ok());    
+        }
+        #[ink::test]
+        fn create_automatic_lotto() {
+            let mut contract = LunesLottoContract::new();
+            assert!(contract.random_lotto().is_ok());
+        }
+    }
+  
 }

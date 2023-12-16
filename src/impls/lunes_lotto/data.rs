@@ -11,7 +11,7 @@ pub type Owner = AccountId;
 pub type Price = Balance;
 pub type TotalAccumulated = Balance;
 pub type ValueAward = Balance;
-
+pub type Hits = u64;
 #[derive(Default, Debug)]
 #[openbrush::storage_item]
 pub struct Data {
@@ -28,6 +28,7 @@ pub struct LunesLotto{
     pub date_raffle: u64,
     pub price: Price,
     pub total_accumulated: TotalAccumulated,
+    pub total_accumulated_next: TotalAccumulated,
     pub status: Status,
 }
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
@@ -37,6 +38,7 @@ pub struct LunesTicket{
     pub game_raffle: NumRaffle,
     pub date_create: u64,
     pub value_award: ValueAward,
+    pub hits: Hits,
     pub owner: Owner,
     pub status: Status,
     
@@ -60,6 +62,9 @@ pub enum LunesError {
     NumRepeating,
     NumInvalid,
     NumSuper60,
+    InvalidPage,
+    BackRaffleNotFound,
+    RaffleNotActive,
 }
 
 impl LunesError {
@@ -71,6 +76,10 @@ impl LunesError {
             LunesError::NumRepeating => String::from("NumRepeating"),
             LunesError::NumInvalid => String::from("NumInvalid"),
             LunesError::NumSuper60 => String::from("NumSuper60"),
+            LunesError::InvalidPage => String::from("InvalidPage"),
+            LunesError::BackRaffleNotFound => String::from("BackRaffleNotFound"),
+            LunesError::RaffleNotActive => String::from("RaffleNotActive"),
+            
         }
     }
 }

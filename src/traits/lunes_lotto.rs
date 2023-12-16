@@ -20,4 +20,6 @@ pub trait LunesLotto {
     fn all_raffle(&mut self, raffle_id: u64, page: u64) -> Result<(), ()>;
     #[ink(message)]
     fn winner_raffle(&mut self, raffle_id: u64) -> Result<(), ()>;
+    #[ink(message)]
+    fn random_lotto(&mut self) -> Result<(), ()>;
 }

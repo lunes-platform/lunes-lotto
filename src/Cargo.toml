@@ -14,8 +14,6 @@ scale-info = { version = "2.6", default-features = false, features = ["derive"],
 
 openbrush = { tag = "4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = ["psp34", "ownable", "reentrancy_guard"] }
 
-chrono = { version = "0.4", default-features = false }
-
 [lib]
 path = "lib.rs"
 

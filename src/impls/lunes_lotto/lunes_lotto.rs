@@ -1,5 +1,4 @@
 use crate::impls::lunes_lotto::data::{ Data, LunesLotto, LunesTicket, LunesError };
-use ink::env::hash::Keccak256;
 use openbrush::{
     modifiers,
     traits::{ AccountId, Balance, Storage },
@@ -53,20 +52,66 @@ pub trait LunesLottoImpl: Storage<Data> +
         &mut self,
         date_raffle: u64,
         price: Balance
-    ) -> Result<u64, OwnableError> {
+    ) -> Result<(), OwnableError> {
         let id = self.data::<Data>().next_id;
-        let sttaus = id == 1;
         self.data::<Data>().rafflies.push(LunesLotto {
             raffle_id: id,
             num_raffle: Vec::new(),
             date_raffle: date_raffle,
             price: price,
             total_accumulated: Self::env().transferred_value(),
-            status: sttaus,
+            status: true,
+            total_accumulated_next: 0,
         });
         self.data::<Data>().next_id += 1;
 
-        Ok(id)
+        Ok(())
+    }
+    /// Random Lotto
+    #[ink(message)]
+    #[openbrush::modifiers(only_owner)]
+    #[modifiers(non_reentrant)]
+    fn random_lotto(&mut self) -> Result<Vec<u64>, PSP22Error> {
+        let num_raffle = self.random();
+        Ok(num_raffle)
+    }
+    /// Create Automatic Raffle
+    #[ink(message)]
+    #[openbrush::modifiers(only_owner)]
+    #[modifiers(non_reentrant)]
+    fn create_automatic_lotto(&mut self) -> Result<(), PSP22Error> {
+        let next_id = self.data::<Data>().next_id;
+        //Verify Raffle active
+        if let Some(_) = self
+            .data::<Data>()
+            .rafflies.iter()
+            .find(|raffle| raffle.status == true)
+        {
+            return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
+        }else{
+            let date_block = Self::env().block_timestamp();
+            let back_reffer_index = self
+                    .data::<Data>()
+                    .rafflies.iter()
+                    .position(|raffle| raffle.raffle_id == next_id);
+            if back_reffer_index.is_none(){
+                return Err(PSP22Error::Custom(LunesError::BackRaffleNotFound.as_str()));
+            }    
+            let price_ticket = self.data::<Data>().rafflies[back_reffer_index.unwrap()].price;
+            let value_award_next = self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
+            self.data::<Data>().rafflies.push(LunesLotto {
+                raffle_id: next_id,
+                num_raffle: Vec::new(),
+                date_raffle: date_block + 259343000,
+                price: price_ticket,
+                total_accumulated: value_award_next,
+                total_accumulated_next: 0,
+                status: true,
+            });
+            self.data::<Data>().next_id += 1;
+        }
+        
+        Ok(())
     }
     /// Do Raffle in the date
     #[ink(message)]
@@ -75,12 +120,13 @@ pub trait LunesLottoImpl: Storage<Data> +
         let index = self
             .data::<Data>()
             .rafflies.iter()
-            .position(|raffle| raffle.status == true)
-            .unwrap();
-        let date_raffle = self.data::<Data>().rafflies[index].date_raffle;
-        let raffle_id = self.data::<Data>().rafflies[index].raffle_id;
-        let total_accumulated = self.data::<Data>().rafflies[index].total_accumulated;
-        let price_ticket = self.data::<Data>().rafflies[index].price;
+            .position(|raffle| raffle.status == true);
+        if index.is_none() {
+            return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
+        }
+        let date_raffle = self.data::<Data>().rafflies[index.unwrap()].date_raffle;
+        let raffle_id = self.data::<Data>().rafflies[index.unwrap()].raffle_id;
+        let total_accumulated = self.data::<Data>().rafflies[index.unwrap()].total_accumulated;
         let value_award_2 = (total_accumulated * 2) / 100;
         let value_award_3 = (total_accumulated * 5) / 100;
         let value_award_4 = (total_accumulated * 10) / 100;
@@ -93,119 +139,94 @@ pub trait LunesLottoImpl: Storage<Data> +
             return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
         }
         //todo call do_raffle
-        self.data::<Data>().rafflies[index].status = false;
-        let num_raffle = self.linear_random_generator();
-        self.data::<Data>().rafflies[index].num_raffle = num_raffle.clone();
-
+        self.data::<Data>().rafflies[index.unwrap()].status = false;
+        let num_raffle = self.random();
+        self.data::<Data>().rafflies[index.unwrap()].num_raffle = num_raffle.clone();
+        
         //find Winner
         let mut winner: Vec<LunesTicket> = Vec::new();
-        let mut winner_2: Vec<LunesTicket> = Vec::new();
-        let mut winner_3: Vec<LunesTicket> = Vec::new();
-        let mut winner_4: Vec<LunesTicket> = Vec::new();
-        let mut winner_5: Vec<LunesTicket> = Vec::new();
-        let mut winner_6: Vec<LunesTicket> = Vec::new();
-
-        let tickets_ = self
+      
+        let mut tickets = self
             .data::<Data>()
-            .tickets.iter()
+            .tickets
+            .iter()
             .filter(|ticket| ticket.raffle_id == raffle_id)
             .collect::<Vec<&LunesTicket>>();
-        for w in tickets_.clone() {
+        let mut total_per_pay_2 = 0;
+        let mut total_per_pay_3 = 0;
+        let mut total_per_pay_4 = 0;
+        let mut total_per_pay_5 = 0;
+        let mut total_per_pay_6 = 0;
+        for w in tickets.iter_mut() {
             let game_raffle = w.game_raffle.clone();
             let matching_numbers = game_raffle
                 .iter()
                 .filter(|&num| num_raffle.clone().contains(num))
                 .count();
-
+            let mut wi = w.clone();
             match matching_numbers {
                 2 => {
-                    winner_2.push(w.clone());
+                    total_per_pay_2 +=1;                    
+                    wi.hits = 2 as u64;
+                    wi.value_award = value_award_2;
+                    winner.push(wi.clone());
                 }
                 3 => {
-                    winner_3.push(w.clone());
+                    total_per_pay_3 +=1;
+                    wi.hits = 3;
+                    wi.value_award = value_award_3;
+                    winner.push(wi.clone());
                 }
                 4 => {
-                    winner_4.push(w.clone());
+                    total_per_pay_4 +=1;
+                    wi.hits = 4;
+                    wi.value_award = value_award_4;
+                    winner.push(wi.clone());
                 }
-                5 => {
-                    winner_5.push(w.clone());
+                5 => {  
+                    total_per_pay_5 +=1;
+                    wi.hits = 5;
+                    wi.value_award = value_award_5;
+                    winner.push(wi.clone());
                 }
                 6 => {
-                    winner_6.push(w.clone());
+                    total_per_pay_6 +=1;
+                    wi.hits = 6;
+                    wi.value_award = value_award_6;
+                    winner.push(wi.clone());
                 }
                 _ => {}
             }
         }
+        self.data::<Data>().winners.extend(winner.clone());
         //Distribuition of LUNES
         let mut value_award_next = 0;
-        let total_per_pay_2 = value_award_2 / (winner_2.len() as u128);
-        let total_per_pay_3 = value_award_3 / (winner_3.len() as u128);
-        let total_per_pay_4 = value_award_4 / (winner_4.len() as u128);
-        let total_per_pay_5 = value_award_5 / (winner_5.len() as u128);
-        let total_per_pay_6 = value_award_6 / (winner_6.len() as u128);
-        for w in winner_2.iter_mut() {
-            w.value_award = total_per_pay_2;
-            w.status = false;
-            winner.push(w.clone());
+        if total_per_pay_2 == 0{
+            value_award_next += value_award_2;
+        } 
+        if total_per_pay_3 == 0{
+            value_award_next += value_award_3;
         }
-        for w in winner_3.iter_mut() {
-            w.value_award = total_per_pay_3;
-            w.status = false;
-            winner.push(w.clone());
+        if total_per_pay_4 == 0{
+            value_award_next += value_award_4;
         }
-        for w in winner_4.iter_mut() {
-            w.value_award = total_per_pay_4;
-            w.status = false;
-            winner.push(w.clone());
+        if total_per_pay_5 == 0{
+            value_award_next += value_award_5;
         }
-        for w in winner_5.iter_mut() {
-            w.value_award = total_per_pay_5;
-            w.status = false;
-            winner.push(w.clone());
+        if total_per_pay_6 == 0{
+            value_award_next += value_award_6;
         }
-        for w in winner_6.iter_mut() {
-            w.value_award = total_per_pay_6;
-            w.status = false;
-            winner.push(w.clone());
-        }
-        if winner_2.len() == 0 {
-            value_award_next += total_per_pay_2;
-        } else if winner_3.len() == 0 {
-            value_award_next += total_per_pay_3;
-        } else if winner_4.len() == 0 {
-            value_award_next += total_per_pay_4;
-        } else if winner_5.len() == 0 {
-            value_award_next += total_per_pay_5;
-        } else if winner_6.len() == 0 {
-            value_award_next += total_per_pay_6;
-        }
-        self.data::<Data>().winners.extend(winner);
-        //Verify next reffer ou create new
-        let next_reffer_index = self
-            .data::<Data>()
-            .rafflies.iter()
-            .position(|raffle| raffle.date_raffle > date_raffle)
-            .unwrap();
-        if next_reffer_index != 0 {
-            self.data::<Data>().rafflies[next_reffer_index].status = true;
-        } else {
-            let next_id = self.data::<Data>().next_id;
-            self.data::<Data>().rafflies.push(LunesLotto {
-                raffle_id: next_id,
-                num_raffle: Vec::new(),
-                date_raffle: date_raffle + 259343000,
-                price: price_ticket,
-                total_accumulated: value_award_next,
-                status: true,
-            });
-            self.data::<Data>().next_id += 1;
-        }
+
+        self.data::<Data>().rafflies[index.unwrap()].total_accumulated_next = value_award_next;
 
         Ok(())
     }
     /// List all Games the user has played
     #[ink(message)]
     fn my_games(&mut self, page: u64) -> Result<Vec<LunesTicket>, PSP22Error> {
+        if page == 0 {
+            return Err(PSP22Error::Custom(LunesError::InvalidPage.as_str()));
+        }
         let games = self
             .data::<Data>()
             .tickets.iter()
@@ -242,6 +263,9 @@ pub trait LunesLottoImpl: Storage<Data> +
     /// List all Raffles
     #[ink(message)]
     fn all_raffle(&mut self, raffle_id: u64, page: u64) -> Result<Vec<LunesLotto>, PSP22Error> {
+        if page == 0 {
+            return Err(PSP22Error::Custom(LunesError::InvalidPage.as_str()));
+        }
         let mut _games: Vec<LunesLotto> = Vec::new();
         if raffle_id == 0 {
             _games = self
@@ -287,6 +311,9 @@ pub trait Internal: Storage<Data> {
             .data::<Data>()
             .rafflies.iter()
             .find(|raffle| raffle.status);
+        if raffle_active.is_none() {
+            return Err(PSP22Error::Custom(LunesError::RaffleNotActive.as_str()));
+        }
         let price_total = raffle_active.unwrap().price * (num_raffle.len() as u128);
         if price_total <= transferred_value {
             for vet_num in num_raffle {
@@ -349,83 +376,44 @@ pub trait Internal: Storage<Data> {
                 raffle_id,
                 status: false,
                 value_award: 0 as u128,
+                hits: 0 as u64,
             };
             self.data::<Data>().tickets.push(ticket);
         }
 
         Ok(())
     }
-
-    fn roles_linear(&mut self) -> Vec<u64> {
-        let mut result: Vec<u64> = Vec::new();
-
-        loop {
-            let seed = self.random();
-            let muil = self.random();
-            let increment = self.random();
-            let modulo = self.random();
-
-            match (muil > modulo, increment > modulo, seed > modulo) {
-                (true, _, _) => {
-                    continue;
-                }
-                (_, true, _) => {
-                    continue;
-                }
-                (_, _, true) => {
-                    continue;
-                }
-                _ => {
-                    result.push(seed);
-                    result.push(muil);
-                    result.push(increment);
-                    result.push(modulo);
-                    break;
-                }
-            }
-        }
-
-        result
-    }
-    fn linear_random_generator(&mut self) -> Vec<u64> {
-        const SIZE: usize = 6;
-        let mut result: Vec<u64> = Vec::new();
-        let mut roles = self.roles_linear();
-        let mut seed = roles[0];
-
-        while result.len() < SIZE {
-            seed = roles[1].wrapping_mul(seed).wrapping_add(roles[2]) % roles[3];
-
-            if !result.contains(&seed) && seed != 0 {
-                result.push(seed);
-            } else {
-                // remove roles of new duplicate seed
-                roles = self.roles_linear();
-                seed = roles[0];
-            }
-        }
-
-        result
-    }
     /// Generates a seed based on the list of players and the block number and timestamp
-    fn seed(&self) -> u64 {
-        let hash = Self::env().hash_encoded::<Keccak256, _>(
-            &self.data().tickets.last().unwrap().owner
-        );
-        let num = u64::from_be_bytes(hash[0..8].try_into().unwrap());
-        let timestamp = Self::env().block_timestamp();
-        let block_number = Self::env().block_number() as u64;
+    fn seed(&self, seed: u64) -> u64 {
+        
+        let timestamp = Self::env().block_timestamp() + seed;
+        let block_number = Self::env().block_number() as u64 + seed;
 
-        num ^ timestamp ^ block_number
+        timestamp ^ block_number
     }
-    /// Pseudo random number generator between 1 and 60
-    fn random(&self) -> u64 {
-        let mut x = self.seed();
-        x ^= x << 13;
-        x ^= x >> 7;
-        x ^= x << 17;
 
-        // Map the random number to the range [1, 60]
-        ((x % 60) + 1) as u64
+    fn random(&self) -> Vec<u64> {
+        let mut unique_numbers = Vec::new();
+        let mut increment = 0;
+        while unique_numbers.len() < 6 {
+            // Generate the seed using the existing seed function
+            let mut x = self.seed(Self::env().block_timestamp()+ increment);
+    
+            // Manipulate the seed to get a pseudo-random result
+            x ^= x << 13;
+            x ^= x >> 7;
+            x ^= x << 17;
+    
+            // Map the random number to the range [1, 60]
+            let random_number = ((x % 60) + 1) as u64;
+            increment += random_number;
+            // Ensure the generated number is unique
+            if !unique_numbers.contains(&random_number) {
+                unique_numbers.push(random_number);
+            }
+        }
+    
+        unique_numbers
     }
+    
 }
