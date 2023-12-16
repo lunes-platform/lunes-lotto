@@ -2,7 +2,7 @@ use crate::impls::lunes_lotto::data::{ Data, LunesLotto, LunesTicket, LunesError
 use openbrush::{
     modifiers,
     traits::{ AccountId, Balance, Storage },
-    contracts::{ ownable::OwnableError, traits::psp22::PSP22Error },
+    contracts::traits::psp22::PSP22Error,
 };
 use ink_prelude::vec::Vec;
 use ink_prelude::vec;
@@ -52,14 +52,32 @@ pub trait LunesLottoImpl: Storage<Data> +
         &mut self,
         date_raffle: u64,
         price: Balance
-    ) -> Result<(), OwnableError> {
+    ) -> Result<(), PSP22Error> {
         let id = self.data::<Data>().next_id;
+        //Verify Raffle active
+        if let Some(_) = self
+            .data::<Data>()
+            .rafflies.iter()
+            .find(|raffle| raffle.status == true)
+        {
+            return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
+        }
+        let mut total_accumulated_next =  Self::env().transferred_value();
+        let back_reffer_index = self
+                    .data::<Data>()
+                    .rafflies.iter()
+                    .position(|raffle| raffle.raffle_id == id - 1);
+        if back_reffer_index.is_some(){
+            total_accumulated_next += self
+            .data::<Data>()
+            .rafflies[back_reffer_index.unwrap()].total_accumulated_next;   
+        }    
         self.data::<Data>().rafflies.push(LunesLotto {
             raffle_id: id,
             num_raffle: Vec::new(),
             date_raffle: date_raffle,
             price: price,
-            total_accumulated: Self::env().transferred_value(),
+            total_accumulated: total_accumulated_next,
             status: true,
             total_accumulated_next: 0,
         });
@@ -93,7 +111,7 @@ pub trait LunesLottoImpl: Storage<Data> +
             let back_reffer_index = self
                     .data::<Data>()
                     .rafflies.iter()
-                    .position(|raffle| raffle.raffle_id == next_id);
+                    .position(|raffle| raffle.raffle_id == next_id - 1);
             if back_reffer_index.is_none(){
                 return Err(PSP22Error::Custom(LunesError::BackRaffleNotFound.as_str()));
             }    
