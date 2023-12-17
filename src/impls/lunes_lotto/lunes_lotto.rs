@@ -12,7 +12,7 @@ use openbrush::contracts::{
     reentrancy_guard,
     reentrancy_guard::non_reentrant,
 };
-use super::data::ListNumRaffle;
+use super::data::{ListNumRaffle, TicketId};
 #[openbrush::trait_definition]
 pub trait LunesLottoImpl: Storage<Data> +
     Storage<reentrancy_guard::Data> +
@@ -134,7 +134,7 @@ pub trait LunesLottoImpl: Storage<Data> +
     /// Do Raffle in the date
     #[ink(message)]
     #[modifiers(non_reentrant)]
-    fn do_raffle_lotto(&mut self) -> Result<(), PSP22Error> {
+    fn do_raffle_lotto(&mut self) -> Result<Vec<u64>, PSP22Error> {
         let index = self
             .data::<Data>()
             .rafflies.iter()
@@ -182,6 +182,8 @@ pub trait LunesLottoImpl: Storage<Data> +
                 .filter(|&num| num_raffle.clone().contains(num))
                 .count();
             let mut wi = w.clone();
+            wi.status = true;
+            wi.date_create = Self::env().block_timestamp();
             match matching_numbers {
                 2 => {
                     total_per_pay_2 +=1;                    
@@ -237,7 +239,7 @@ pub trait LunesLottoImpl: Storage<Data> +
 
         self.data::<Data>().rafflies[index.unwrap()].total_accumulated_next = value_award_next;
 
-        Ok(())
+        Ok(num_raffle)
     }
     /// List all Games the user has played
     #[ink(message)]
@@ -259,22 +261,57 @@ pub trait LunesLottoImpl: Storage<Data> +
     /// Payable in LUNES to ticket
     #[ink(message)]
     #[modifiers(non_reentrant)]
-    fn payment(&mut self) -> Result<(), PSP22Error> {
+    fn payment(&mut self, ticket_id: TicketId) -> Result<(), PSP22Error> {
         if
             let Some(_) = self
                 .data::<Data>()
                 .winners.iter()
-                .find(|winner| winner.owner == Self::env().caller() && winner.status)
+                .find(|winner| winner.owner == Self::env().caller() && winner.status == true && winner.ticket_id == ticket_id) 
         {
             let index = self
                 .data::<Data>()
                 .winners.iter()
-                .position(|winner| winner.owner == Self::env().caller())
-                .unwrap();
+                .position(|winner| winner.owner == Self::env().caller() && winner.status == true && winner.ticket_id == ticket_id)
+                .unwrap();            
+            //verify date received payment at 90 days
+            let now = Self::env().block_timestamp();
+            if now - self.data::<Data>().winners[index].date_create > 90 * 24 * 60 * 60 {
+                return Err(PSP22Error::Custom(LunesError::PaymentExpired.as_str()));
+            }
             self.data::<Data>().winners[index].status = false;
             let caller = Self::env().caller();
             Self::env().transfer(caller, self.data::<Data>().winners[index].value_award).unwrap();
             return Ok(());
+        }
+        Err(PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))
+    }
+
+    /// Payable in LUNES to ticket expired for 90 days
+    #[ink(message)]
+    #[openbrush::modifiers(only_owner)]
+    #[modifiers(non_reentrant)]
+    fn payment_expired(&mut self, ticket_id: TicketId) -> Result<(), PSP22Error> {
+
+       if
+            let Some(_) = self
+                .data::<Data>()
+                .winners.iter()
+                .find(|winner| winner.status == true && winner.ticket_id == ticket_id) 
+        {
+            let index = self
+                .data::<Data>()
+                .winners.iter()
+                .position(|winner| winner.status == true && winner.ticket_id == ticket_id)
+                .unwrap();            
+            //verify date received payment at 90 days
+            let now = Self::env().block_timestamp();
+            if now - self.data::<Data>().winners[index].date_create > 90 * 24 * 60 * 60 {
+                let owner = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
+                self.data::<Data>().winners[index].status = false;
+                Self::env().transfer(owner, self.data::<Data>().winners[index].value_award).unwrap();
+                return Ok(());
+            }
+            
         }
         Err(PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))
     }
@@ -316,6 +353,38 @@ pub trait LunesLottoImpl: Storage<Data> +
             .cloned()
             .collect();
         return Ok(winners);
+    }
+    /// Transfer ticket to
+    #[ink(message)]
+    #[modifiers(non_reentrant)]
+    fn transfer_ticket_to(&mut self, to: AccountId, ticket_id: TicketId) -> Result<(), PSP22Error> {
+        let caller = Self::env().caller();
+        if
+            let Some(_) = self
+                .data::<Data>()
+                .tickets.iter()
+                .find(|ticket| ticket.owner == caller && ticket.ticket_id == ticket_id)
+        {
+            let index = self
+                .data::<Data>()
+                .tickets.iter()
+                .position(|ticket| ticket.owner == caller && ticket.ticket_id == ticket_id)
+                .unwrap();     
+            //verify raffel active
+            let raffler_id = self.data::<Data>().tickets[index].raffle_id;
+            let index_raffle = self
+                .data::<Data>()
+                .rafflies.iter()
+                .position(|raffle| raffle.status == true && raffle.raffle_id == raffler_id);     
+            if index_raffle.is_none() {
+                return Err(PSP22Error::Custom(LunesError::RaffleNotActive.as_str()));
+            }  
+            //Do transfer
+            self.data::<Data>().tickets[index].owner = to;
+            return Ok(());
+
+        }
+        Err(PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))
     }
 }
 pub trait Internal: Storage<Data> {
@@ -380,6 +449,7 @@ pub trait Internal: Storage<Data> {
         date_block: u64
     ) -> Result<(), PSP22Error> {
         for vet_num in num_raffle {
+            let ticket_id = self.data::<Data>().next_ticket_id;
             let ticket = LunesTicket {
                 owner: to,
                 game_raffle: vec![
@@ -395,7 +465,9 @@ pub trait Internal: Storage<Data> {
                 status: false,
                 value_award: 0 as u128,
                 hits: 0 as u64,
+                ticket_id: ticket_id,
             };
+            self.data::<Data>().next_ticket_id += 1;
             self.data::<Data>().tickets.push(ticket);
         }
 

@@ -1,3 +1,4 @@
+use ink::primitives::AccountId;
 use openbrush::traits::Balance;
 use ink_prelude::vec::Vec;
 
@@ -22,4 +23,8 @@ pub trait LunesLotto {
     fn winner_raffle(&mut self, raffle_id: u64) -> Result<(), ()>;
     #[ink(message)]
     fn random_lotto(&mut self) -> Result<(), ()>;
+    #[ink(message)]
+    fn payment_expired(&mut self, ticket_id: u64) -> Result<(), ()>;
+    #[ink(message)]
+    fn transfer_ticket_to(&mut self, to: AccountId, ticket_id: u64) -> Result<(), ()>; 
 }

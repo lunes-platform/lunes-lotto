@@ -16,6 +16,7 @@ pub type Hits = u64;
 #[openbrush::storage_item]
 pub struct Data {
     pub next_id: RaffleId,
+    pub next_ticket_id: RaffleId,
     pub rafflies: Vec<LunesLotto>,
     pub tickets: Vec<LunesTicket>,
     pub winners: Vec<LunesTicket>,
@@ -35,6 +36,7 @@ pub struct LunesLotto{
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct LunesTicket{
     pub raffle_id: RaffleId,
+    pub ticket_id: TicketId,
     pub game_raffle: NumRaffle,
     pub date_create: u64,
     pub value_award: ValueAward,
@@ -65,6 +67,7 @@ pub enum LunesError {
     InvalidPage,
     BackRaffleNotFound,
     RaffleNotActive,
+    PaymentExpired,
 }
 
 impl LunesError {
@@ -79,6 +82,7 @@ impl LunesError {
             LunesError::InvalidPage => String::from("InvalidPage"),
             LunesError::BackRaffleNotFound => String::from("BackRaffleNotFound"),
             LunesError::RaffleNotActive => String::from("RaffleNotActive"),
+            LunesError::PaymentExpired => String::from("PaymentExpired"),
             
         }
     }
