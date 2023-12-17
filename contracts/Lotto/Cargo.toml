@@ -1,5 +1,5 @@
 [package]
-name = "lunesnft"
+name = "lotto-lunes"
 version = "1.0.0"
 authors = ["Lunes Nightly"]
 edition = "2021"
@@ -11,7 +11,7 @@ scale = { package = "parity-scale-codec", version = "3", default-features = fals
 scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
 
 openbrush = { tag = "4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = ["ownable", "reentrancy_guard"] }
-lunes_lotto_pkg = { path = "../../src", default-features = false }
+lotto_lunes_pkg = { path = "../../src", default-features = false }
 
 [lib]
 path = "lib.rs"
@@ -24,6 +24,6 @@ std = [
     "scale-info/std",
 
     "openbrush/std",
-    "lunes_lotto_pkg/std",
+    "lotto_lunes_pkg/std",
 ]
 ink-as-dependency = []

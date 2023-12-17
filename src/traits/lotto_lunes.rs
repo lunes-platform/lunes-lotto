@@ -3,10 +3,10 @@ use openbrush::traits::Balance;
 use ink_prelude::vec::Vec;
 
 #[openbrush::wrapper]
-pub type LunesLottoRef = dyn LunesLotto;
+pub type LottoLunesRef = dyn LottoLunes;
 
 #[openbrush::trait_definition]
-pub trait LunesLotto {
+pub trait LottoLunes {
     #[ink(message, payable)]
     fn play_lunes(&mut self, num: Vec<u64>) -> Result<(), ()>;    
     #[ink(message)]

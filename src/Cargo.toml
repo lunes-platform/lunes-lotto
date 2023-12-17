@@ -1,5 +1,5 @@
 [package]
-name = "lunes_lotto_pkg"
+name = "lotto_lunes_pkg"
 version = "0.4.0"
 authors = ["Astar builder"]
 edition = "2021"

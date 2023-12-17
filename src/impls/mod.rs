@@ -1,1 +1,1 @@
-pub mod lunes_lotto;
+pub mod lotto_lunes;

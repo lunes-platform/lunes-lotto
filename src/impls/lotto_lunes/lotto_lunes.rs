@@ -1,4 +1,4 @@
-use crate::impls::lunes_lotto::data::{ Data, LunesLotto, LunesTicket, LunesError };
+use crate::impls::lotto_lunes::data::{ Data, LottoLunes, LunesTicket, LunesError };
 use openbrush::{
     modifiers,
     traits::{ AccountId, Balance, Storage },
@@ -14,7 +14,7 @@ use openbrush::contracts::{
 };
 use super::data::{ListNumRaffle, TicketId};
 #[openbrush::trait_definition]
-pub trait LunesLottoImpl: Storage<Data> +
+pub trait LottoLunesImpl: Storage<Data> +
     Storage<reentrancy_guard::Data> +
     Storage<ownable::Data> +
     Internal
@@ -72,7 +72,7 @@ pub trait LunesLottoImpl: Storage<Data> +
             .data::<Data>()
             .rafflies[back_reffer_index.unwrap()].total_accumulated_next;   
         }    
-        self.data::<Data>().rafflies.push(LunesLotto {
+        self.data::<Data>().rafflies.push(LottoLunes {
             raffle_id: id,
             num_raffle: Vec::new(),
             date_raffle: date_raffle,
@@ -117,7 +117,7 @@ pub trait LunesLottoImpl: Storage<Data> +
             }    
             let price_ticket = self.data::<Data>().rafflies[back_reffer_index.unwrap()].price;
             let value_award_next = self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
-            self.data::<Data>().rafflies.push(LunesLotto {
+            self.data::<Data>().rafflies.push(LottoLunes {
                 raffle_id: next_id,
                 num_raffle: Vec::new(),
                 date_raffle: date_block + 259343000,
@@ -317,11 +317,11 @@ pub trait LunesLottoImpl: Storage<Data> +
     }
     /// List all Raffles
     #[ink(message)]
-    fn all_raffle(&mut self, raffle_id: u64, page: u64) -> Result<Vec<LunesLotto>, PSP22Error> {
+    fn all_raffle(&mut self, raffle_id: u64, page: u64) -> Result<Vec<LottoLunes>, PSP22Error> {
         if page == 0 {
             return Err(PSP22Error::Custom(LunesError::InvalidPage.as_str()));
         }
-        let mut _games: Vec<LunesLotto> = Vec::new();
+        let mut _games: Vec<LottoLunes> = Vec::new();
         if raffle_id == 0 {
             _games = self
                 .data::<Data>()

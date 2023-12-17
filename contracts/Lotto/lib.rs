@@ -1,7 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 #[openbrush::implementation(Ownable)]
 #[openbrush::contract]
-pub mod lunes_lotto{
+pub mod lotto_lunes{
     use openbrush::{
         contracts::{
             ownable,           
@@ -9,11 +9,11 @@ pub mod lunes_lotto{
         },
         traits::Storage,
     };
-    use lunes_lotto_pkg::impls::lunes_lotto::{lunes_lotto::*, data };
+    use lotto_lunes_pkg::impls::lotto_lunes::{lotto_lunes::*, data };
 
     #[ink(storage)]
     #[derive(Default, Storage)]
-    pub struct LunesLottoContract {
+    pub struct LottoLunesContract {
         #[storage_field]
         payable_lotto: data::Data,
         #[storage_field]
@@ -22,10 +22,10 @@ pub mod lunes_lotto{
         ownable: ownable::Data,
     }
 
-    impl lunes_lotto_pkg::impls::lunes_lotto::lunes_lotto::Internal for LunesLottoContract {}
-    impl LunesLottoImpl for LunesLottoContract {}
+    impl lotto_lunes_pkg::impls::lotto_lunes::lotto_lunes::Internal for LottoLunesContract {}
+    impl LottoLunesImpl for LottoLunesContract {}
 
-    impl LunesLottoContract {
+    impl LottoLunesContract {
         #[ink(constructor)]
         pub fn new() -> Self {
             let mut instance = Self::default();
@@ -46,12 +46,12 @@ pub mod lunes_lotto{
         use super::*;
         #[ink::test]
         fn random_lotto() {
-            let mut contract = LunesLottoContract::new();           
+            let mut contract = LottoLunesContract::new();           
             assert!(contract.random_lotto().is_ok());    
         }
         #[ink::test]
         fn create_automatic_lotto() {
-            let mut contract = LunesLottoContract::new();
+            let mut contract = LottoLunesContract::new();
             assert!(contract.random_lotto().is_ok());
         }
     }

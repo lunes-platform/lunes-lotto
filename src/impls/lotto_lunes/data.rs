@@ -17,13 +17,13 @@ pub type Hits = u64;
 pub struct Data {
     pub next_id: RaffleId,
     pub next_ticket_id: RaffleId,
-    pub rafflies: Vec<LunesLotto>,
+    pub rafflies: Vec<LottoLunes>,
     pub tickets: Vec<LunesTicket>,
     pub winners: Vec<LunesTicket>,
 }
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
-pub struct LunesLotto{
+pub struct LottoLunes{
     pub raffle_id: RaffleId,
     pub num_raffle: NumRaffle,
     pub date_raffle: u64,
