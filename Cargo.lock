@@ -640,23 +640,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 
 [[package]]
-name = "lunes_lotto_pkg"
-version = "0.4.0"
+name = "lotto-lunes"
+version = "1.0.0"
 dependencies = [
  "ink",
- "ink_prelude 3.4.0",
- "ink_storage",
+ "lotto_lunes_pkg",
  "openbrush",
  "parity-scale-codec",
  "scale-info",
 ]
 
 [[package]]
-name = "lunesnft"
-version = "1.0.0"
+name = "lotto_lunes_pkg"
+version = "0.4.0"
 dependencies = [
  "ink",
- "lunes_lotto_pkg",
+ "ink_prelude 3.4.0",
+ "ink_storage",
  "openbrush",
  "parity-scale-codec",
  "scale-info",

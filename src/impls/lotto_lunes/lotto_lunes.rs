@@ -236,6 +236,15 @@ pub trait LottoLunesImpl: Storage<Data> +
         if total_per_pay_6 == 0{
             value_award_next += value_award_6;
         }
+        //if accumulated then 50% Lunes
+        if value_award_next != 0{
+            let payment_lunes = (value_award_next * 50) / 100;            
+            value_award_next -= payment_lunes;
+            let owner_ = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
+            Self::env()
+                .transfer(owner_, payment_lunes)
+                .map_err(|_| PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))?;
+        }
 
         self.data::<Data>().rafflies[index.unwrap()].total_accumulated_next = value_award_next;
 
@@ -252,6 +261,7 @@ pub trait LottoLunesImpl: Storage<Data> +
             .tickets.iter()
             .filter(|ticket| ticket.owner == Self::env().caller())
             .cloned()
+            .rev()
             .skip(((page - 1) * (100 as u64)).try_into().unwrap())
             .take(100)
             .collect();
@@ -279,8 +289,11 @@ pub trait LottoLunesImpl: Storage<Data> +
                 return Err(PSP22Error::Custom(LunesError::PaymentExpired.as_str()));
             }
             self.data::<Data>().winners[index].status = false;
-            let caller = Self::env().caller();
-            Self::env().transfer(caller, self.data::<Data>().winners[index].value_award).unwrap();
+            
+            let owner_ = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
+            Self::env()
+                .transfer(owner_, self.data::<Data>().winners[index].value_award)
+                .map_err(|_| PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))?;
             return Ok(());
         }
         Err(PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))
@@ -327,6 +340,7 @@ pub trait LottoLunesImpl: Storage<Data> +
                 .data::<Data>()
                 .rafflies.iter()
                 .cloned()
+                .rev()
                 .skip(((page - 1) * (100 as u64)).try_into().unwrap())
                 .take(100)
                 .collect();
@@ -336,6 +350,7 @@ pub trait LottoLunesImpl: Storage<Data> +
                 .rafflies.iter()
                 .filter(|riff| riff.raffle_id == raffle_id)
                 .cloned()
+                .rev()
                 .skip(((page - 1) * (100 as u64)).try_into().unwrap())
                 .take(100)
                 .collect();
