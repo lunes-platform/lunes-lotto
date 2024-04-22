@@ -39,6 +39,7 @@ Instructions for project setup and execution:
 Para compilar o contrato, execute o seguinte comando na raiz do projeto:
 
 ```bash
+cargo install cargo-contract --locked --version ^4
 cargo contract build --release
 ```
 

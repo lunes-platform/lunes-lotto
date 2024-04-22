@@ -1,3 +1,4 @@
+#![warn(clippy::arithmetic_side_effects)]
 use crate::impls::lotto_lunes::data::{ Data, LottoLunes, LunesTicket, LunesError };
 use openbrush::{
     modifiers,
@@ -27,7 +28,8 @@ pub trait LottoLunesImpl: Storage<Data> +
         let date_block = Self::env().block_timestamp();
         let raffle_id = self.check_amount(Self::env().transferred_value(), num_rifle.clone())?;
         let mut value_pay = Self::env().transferred_value();
-        let tax_lunes = (value_pay * 17) / 100;
+        
+        let tax_lunes:u128 = (value_pay * (17 as u128)) / 100;
         value_pay = value_pay - tax_lunes;
         //update Raffle
         let index = self
@@ -75,8 +77,8 @@ pub trait LottoLunesImpl: Storage<Data> +
         self.data::<Data>().rafflies.push(LottoLunes {
             raffle_id: id,
             num_raffle: Vec::new(),
-            date_raffle: date_raffle,
-            price: price,
+            date_raffle,
+            price,
             total_accumulated: total_accumulated_next,
             status: true,
             total_accumulated_next: 0,
@@ -318,7 +320,7 @@ pub trait LottoLunesImpl: Storage<Data> +
                 .unwrap();            
             //verify date received payment at 90 days
             let now = Self::env().block_timestamp();
-            if now - self.data::<Data>().winners[index].date_create > 90 * 24 * 60 * 60 {
+            if now - self.data::<Data>().winners[index].date_create > (90 * 24 * 60 * 60) as u64 {
                 let owner = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
                 self.data::<Data>().winners[index].status = false;
                 Self::env().transfer(owner, self.data::<Data>().winners[index].value_award).unwrap();
@@ -341,7 +343,7 @@ pub trait LottoLunesImpl: Storage<Data> +
                 .rafflies.iter()
                 .cloned()
                 .rev()
-                .skip(((page - 1) * (100 as u64)).try_into().unwrap())
+                .skip(((page - (1 as u64)) * (100 as u64)).try_into().unwrap())
                 .take(100)
                 .collect();
         } else {
@@ -351,7 +353,7 @@ pub trait LottoLunesImpl: Storage<Data> +
                 .filter(|riff| riff.raffle_id == raffle_id)
                 .cloned()
                 .rev()
-                .skip(((page - 1) * (100 as u64)).try_into().unwrap())
+                .skip(((page - (1 as u64)) * (100 as u64)).try_into().unwrap())
                 .take(100)
                 .collect();
         }
@@ -480,7 +482,7 @@ pub trait Internal: Storage<Data> {
                 status: false,
                 value_award: 0 as u128,
                 hits: 0 as u64,
-                ticket_id: ticket_id,
+                ticket_id,
             };
             self.data::<Data>().next_ticket_id += 1;
             self.data::<Data>().tickets.push(ticket);
@@ -499,7 +501,7 @@ pub trait Internal: Storage<Data> {
 
     fn random(&self) -> Vec<u64> {
         let mut unique_numbers = Vec::new();
-        let mut increment = 0;
+        let mut increment:u64 = 0;
         while unique_numbers.len() < 6 {
             // Generate the seed using the existing seed function
             let mut x = self.seed(Self::env().block_timestamp()+ increment);
