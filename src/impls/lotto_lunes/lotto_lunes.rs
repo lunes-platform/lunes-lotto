@@ -442,7 +442,7 @@ pub trait LottoLunesImpl:
             .skip(((page - (1 as u64)) * (100 as u64)).try_into().unwrap())
             .take(100)
             .collect();
-        let count = self.data::<Data>().rafflies.iter().count() as u64;
+        let count = self.data::<Data>().rafflies.iter().filter(|riff| riff.status_done == done).count() as u64;
 
         Ok(PageListRaffle {
             count: count.clone(),
