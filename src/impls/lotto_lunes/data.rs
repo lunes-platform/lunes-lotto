@@ -26,6 +26,7 @@ pub struct Data {
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct LottoLunes{
+    pub date_create: u64,
     pub raffle_id: RaffleId,
     pub num_raffle: NumRaffle,
     pub date_raffle: u64,

@@ -49,14 +49,12 @@ pub trait LottoLunesImpl:
     fn create_raffle_lotto(&mut self, date_raffle: u64, price: Balance) -> Result<(), PSP22Error> {
         let id = self.data::<Data>().next_id;
         //Verify Raffle active
-        if let Some(_) = self
+        let refflet_active = self
             .data::<Data>()
             .rafflies
             .iter()
-            .find(|raffle| raffle.status == true)
-        {
-            return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
-        }
+            .any(|raffle| raffle.status == true);
+
         let mut total_accumulated_next = Self::env().transferred_value();
         let back_reffer_index = self
             .data::<Data>()
@@ -67,15 +65,17 @@ pub trait LottoLunesImpl:
             total_accumulated_next +=
                 self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
         }
+        let date_block = Self::env().block_timestamp();
         self.data::<Data>().rafflies.push(LottoLunes {
             raffle_id: id,
             num_raffle: Vec::new(),
             date_raffle,
             price,
             total_accumulated: total_accumulated_next,
-            status: true,
+            status: !refflet_active,
             total_accumulated_next: 0,
             status_done: false,
+            date_create: date_block,
         });
         self.data::<Data>().next_id += 1;
 
@@ -92,40 +92,51 @@ pub trait LottoLunesImpl:
     /// Create Automatic Raffle
     #[ink(message)]
     #[modifiers(non_reentrant)]
-    fn create_automatic_lotto(&mut self) -> Result<(), PSP22Error> {
+    fn create_automatic_lotto(&mut self, back_raffle_id: u64) -> Result<(), PSP22Error> {
         let next_id = self.data::<Data>().next_id;
         //Verify Raffle active
-        if let Some(_) = self
+        if self
             .data::<Data>()
             .rafflies
             .iter()
-            .find(|raffle| raffle.status == true)
+            .any(|raffle| raffle.status == true)
         {
             return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
         } else {
-            let date_block = Self::env().block_timestamp();
+            let new_reffer_index = self
+                .data::<Data>()
+                .rafflies
+                .iter()
+                .position(|raffle| raffle.raffle_id == back_raffle_id +1);
             let back_reffer_index = self
                 .data::<Data>()
                 .rafflies
                 .iter()
-                .position(|raffle| raffle.raffle_id == next_id - 1);
+                .position(|raffle| raffle.raffle_id == back_raffle_id && raffle.status_done);
+
             if back_reffer_index.is_none() {
                 return Err(PSP22Error::Custom(LunesError::BackRaffleNotFound.as_str()));
             }
-            let price_ticket = self.data::<Data>().rafflies[back_reffer_index.unwrap()].price;
-            let value_award_next =
-                self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
-            self.data::<Data>().rafflies.push(LottoLunes {
-                raffle_id: next_id,
-                num_raffle: Vec::new(),
-                date_raffle: date_block + 259343000,
-                price: price_ticket,
-                total_accumulated: value_award_next,
-                total_accumulated_next: 0,
-                status: true,
-                status_done: false,
-            });
-            self.data::<Data>().next_id += 1;
+            if new_reffer_index.is_none() {                
+                let date_block = Self::env().block_timestamp();
+                let price_ticket = self.data::<Data>().rafflies[back_reffer_index.unwrap()].price;
+                let value_award_next =
+                    self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
+                self.data::<Data>().rafflies.push(LottoLunes {
+                    raffle_id: next_id,
+                    num_raffle: Vec::new(),
+                    date_raffle: date_block + 259343000,
+                    price: price_ticket,
+                    total_accumulated: value_award_next,
+                    total_accumulated_next: 0,
+                    status: true,
+                    status_done: false,
+                    date_create: date_block,
+                });
+                self.data::<Data>().next_id += 1;
+            }else{
+                self.data::<Data>().rafflies[new_reffer_index.unwrap()].status = true;
+            }
         }
 
         Ok(())
@@ -445,7 +456,7 @@ pub trait LottoLunesImpl:
         if page == 0 {
             return Err(PSP22Error::Custom(LunesError::InvalidPage.as_str()));
         }
-        let  tickets:Vec<LunesTicket> = self
+        let tickets: Vec<LunesTicket> = self
             .data::<Data>()
             .tickets
             .iter()
@@ -465,31 +476,27 @@ pub trait LottoLunesImpl:
         Ok(PageListTicket {
             count: count.clone(),
             page,
-            tickets
+            tickets,
         })
     }
     //Chage Tax Lunes
     #[ink(message)]
     #[openbrush::modifiers(only_owner)]
     #[modifiers(non_reentrant)]
-    fn change_tx(&mut self, new_tx: u64) -> Result<(), PSP22Error>{
+    fn change_tx(&mut self, new_tx: u64) -> Result<(), PSP22Error> {
         self.data::<Data>().tx_lunes = new_tx;
         Ok(())
     }
-     //Chage Tax Lunes
-     #[ink(message)]
-    fn info_contract(&mut self) -> Result<InfoContract, ()>{
-        let count_tickets = self
-            .data::<Data>()
-            .tickets
-            .iter()
-            .count() as u64;
+    //Chage Tax Lunes
+    #[ink(message)]
+    fn info_contract(&mut self) -> Result<InfoContract, ()> {
+        let count_tickets = self.data::<Data>().tickets.iter().count() as u64;
         let count_rafflies = self.data::<Data>().rafflies.iter().count() as u64;
 
-        Ok(InfoContract{
+        Ok(InfoContract {
             tx_lunes: self.data::<Data>().tx_lunes,
-            count_lotto:count_rafflies,
-            count_tickets
+            count_lotto: count_rafflies,
+            count_tickets,
         })
     }
 }
