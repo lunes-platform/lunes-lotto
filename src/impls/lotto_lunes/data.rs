@@ -12,6 +12,7 @@ pub type Price = Balance;
 pub type TotalAccumulated = Balance;
 pub type ValueAward = Balance;
 pub type Hits = u64;
+pub type TxLunes = u64;
 #[derive(Default, Debug)]
 #[openbrush::storage_item]
 pub struct Data {
@@ -20,6 +21,7 @@ pub struct Data {
     pub rafflies: Vec<LottoLunes>,
     pub tickets: Vec<LunesTicket>,
     pub winners: Vec<LunesTicket>,
+    pub tx_lunes: TxLunes
 }
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -31,6 +33,7 @@ pub struct LottoLunes{
     pub total_accumulated: TotalAccumulated,
     pub total_accumulated_next: TotalAccumulated,
     pub status: Status,
+    pub status_done: Status,
 }
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -54,6 +57,30 @@ pub struct ListNumRaffle{
     pub num_4: u64,
     pub num_5: u64,
     pub num_6: u64,
+}
+
+#[derive(Debug, PartialEq, Clone, Eq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub struct PageListRaffle {
+    pub count: u64,
+    pub page: u64,
+    pub loto_lunes: Vec<LottoLunes>,
+    
+}
+#[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub struct PageListTicket {
+    pub count: u64,
+    pub page: u64,
+    pub tickets: Vec<LunesTicket>,
+    
+}
+#[derive(Debug, PartialEq, Clone, Eq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub struct InfoContract {
+    pub tx_lunes: u64,
+    pub count_lotto: u64,
+    pub count_tickets: u64,
 }
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]

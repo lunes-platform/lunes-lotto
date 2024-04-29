@@ -1,24 +1,19 @@
 #![warn(clippy::arithmetic_side_effects)]
-use crate::impls::lotto_lunes::data::{ Data, LottoLunes, LunesTicket, LunesError };
-use openbrush::{
-    modifiers,
-    traits::{ AccountId, Balance, Storage },
-    contracts::traits::psp22::PSP22Error,
-};
-use ink_prelude::vec::Vec;
+use super::data::{InfoContract, ListNumRaffle, PageListRaffle, PageListTicket, TicketId};
+use crate::impls::lotto_lunes::data::{Data, LottoLunes, LunesError, LunesTicket};
 use ink_prelude::vec;
+use ink_prelude::vec::Vec;
 use openbrush::contracts::{
-    ownable,
-    ownable::only_owner,
-    reentrancy_guard,
-    reentrancy_guard::non_reentrant,
+    ownable, ownable::only_owner, reentrancy_guard, reentrancy_guard::non_reentrant,
 };
-use super::data::{ListNumRaffle, TicketId};
+use openbrush::{
+    contracts::traits::psp22::PSP22Error,
+    modifiers,
+    traits::{AccountId, Balance, Storage},
+};
 #[openbrush::trait_definition]
-pub trait LottoLunesImpl: Storage<Data> +
-    Storage<reentrancy_guard::Data> +
-    Storage<ownable::Data> +
-    Internal
+pub trait LottoLunesImpl:
+    Storage<Data> + Storage<reentrancy_guard::Data> + Storage<ownable::Data> + Internal
 {
     /// Payable in LUNES
     #[ink(message, payable)]
@@ -28,13 +23,14 @@ pub trait LottoLunesImpl: Storage<Data> +
         let date_block = Self::env().block_timestamp();
         let raffle_id = self.check_amount(Self::env().transferred_value(), num_rifle.clone())?;
         let mut value_pay = Self::env().transferred_value();
-        
-        let tax_lunes:u128 = (value_pay * (17 as u128)) / 100;
+        let tx_lunes = self.data::<Data>().tx_lunes;
+        let tax_lunes: u128 = (value_pay * (tx_lunes as u128)) / 100;
         value_pay = value_pay - tax_lunes;
         //update Raffle
         let index = self
             .data::<Data>()
-            .rafflies.iter()
+            .rafflies
+            .iter()
             .position(|ix| ix.raffle_id == raffle_id)
             .unwrap();
         self.data::<Data>().rafflies[index].total_accumulated += value_pay;
@@ -50,30 +46,27 @@ pub trait LottoLunesImpl: Storage<Data> +
     /// Create Raffle with Date, Price and Total Accumulated
     #[ink(message, payable)]
     #[openbrush::modifiers(only_owner)]
-    fn create_raffle_lotto(
-        &mut self,
-        date_raffle: u64,
-        price: Balance
-    ) -> Result<(), PSP22Error> {
+    fn create_raffle_lotto(&mut self, date_raffle: u64, price: Balance) -> Result<(), PSP22Error> {
         let id = self.data::<Data>().next_id;
         //Verify Raffle active
         if let Some(_) = self
             .data::<Data>()
-            .rafflies.iter()
+            .rafflies
+            .iter()
             .find(|raffle| raffle.status == true)
         {
             return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
         }
-        let mut total_accumulated_next =  Self::env().transferred_value();
+        let mut total_accumulated_next = Self::env().transferred_value();
         let back_reffer_index = self
-                    .data::<Data>()
-                    .rafflies.iter()
-                    .position(|raffle| raffle.raffle_id == id - 1);
-        if back_reffer_index.is_some(){
-            total_accumulated_next += self
             .data::<Data>()
-            .rafflies[back_reffer_index.unwrap()].total_accumulated_next;   
-        }    
+            .rafflies
+            .iter()
+            .position(|raffle| raffle.raffle_id == id - 1);
+        if back_reffer_index.is_some() {
+            total_accumulated_next +=
+                self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
+        }
         self.data::<Data>().rafflies.push(LottoLunes {
             raffle_id: id,
             num_raffle: Vec::new(),
@@ -82,6 +75,7 @@ pub trait LottoLunesImpl: Storage<Data> +
             total_accumulated: total_accumulated_next,
             status: true,
             total_accumulated_next: 0,
+            status_done: false,
         });
         self.data::<Data>().next_id += 1;
 
@@ -97,28 +91,30 @@ pub trait LottoLunesImpl: Storage<Data> +
     }
     /// Create Automatic Raffle
     #[ink(message)]
-    #[openbrush::modifiers(only_owner)]
     #[modifiers(non_reentrant)]
     fn create_automatic_lotto(&mut self) -> Result<(), PSP22Error> {
         let next_id = self.data::<Data>().next_id;
         //Verify Raffle active
         if let Some(_) = self
             .data::<Data>()
-            .rafflies.iter()
+            .rafflies
+            .iter()
             .find(|raffle| raffle.status == true)
         {
             return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
-        }else{
+        } else {
             let date_block = Self::env().block_timestamp();
             let back_reffer_index = self
-                    .data::<Data>()
-                    .rafflies.iter()
-                    .position(|raffle| raffle.raffle_id == next_id - 1);
-            if back_reffer_index.is_none(){
+                .data::<Data>()
+                .rafflies
+                .iter()
+                .position(|raffle| raffle.raffle_id == next_id - 1);
+            if back_reffer_index.is_none() {
                 return Err(PSP22Error::Custom(LunesError::BackRaffleNotFound.as_str()));
-            }    
+            }
             let price_ticket = self.data::<Data>().rafflies[back_reffer_index.unwrap()].price;
-            let value_award_next = self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
+            let value_award_next =
+                self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
             self.data::<Data>().rafflies.push(LottoLunes {
                 raffle_id: next_id,
                 num_raffle: Vec::new(),
@@ -127,10 +123,11 @@ pub trait LottoLunesImpl: Storage<Data> +
                 total_accumulated: value_award_next,
                 total_accumulated_next: 0,
                 status: true,
+                status_done: false,
             });
             self.data::<Data>().next_id += 1;
         }
-        
+
         Ok(())
     }
     /// Do Raffle in the date
@@ -139,7 +136,8 @@ pub trait LottoLunesImpl: Storage<Data> +
     fn do_raffle_lotto(&mut self) -> Result<Vec<u64>, PSP22Error> {
         let index = self
             .data::<Data>()
-            .rafflies.iter()
+            .rafflies
+            .iter()
             .position(|raffle| raffle.status == true);
         if index.is_none() {
             return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
@@ -162,10 +160,12 @@ pub trait LottoLunesImpl: Storage<Data> +
         self.data::<Data>().rafflies[index.unwrap()].status = false;
         let num_raffle = self.random();
         self.data::<Data>().rafflies[index.unwrap()].num_raffle = num_raffle.clone();
-        
+        //Done
+        self.data::<Data>().rafflies[index.unwrap()].status_done = true;
+
         //find Winner
         let mut winner: Vec<LunesTicket> = Vec::new();
-      
+
         let mut tickets = self
             .data::<Data>()
             .tickets
@@ -188,31 +188,31 @@ pub trait LottoLunesImpl: Storage<Data> +
             wi.date_create = Self::env().block_timestamp();
             match matching_numbers {
                 2 => {
-                    total_per_pay_2 +=1;                    
+                    total_per_pay_2 += 1;
                     wi.hits = 2 as u64;
                     wi.value_award = value_award_2;
                     winner.push(wi.clone());
                 }
                 3 => {
-                    total_per_pay_3 +=1;
+                    total_per_pay_3 += 1;
                     wi.hits = 3;
                     wi.value_award = value_award_3;
                     winner.push(wi.clone());
                 }
                 4 => {
-                    total_per_pay_4 +=1;
+                    total_per_pay_4 += 1;
                     wi.hits = 4;
                     wi.value_award = value_award_4;
                     winner.push(wi.clone());
                 }
-                5 => {  
-                    total_per_pay_5 +=1;
+                5 => {
+                    total_per_pay_5 += 1;
                     wi.hits = 5;
                     wi.value_award = value_award_5;
                     winner.push(wi.clone());
                 }
                 6 => {
-                    total_per_pay_6 +=1;
+                    total_per_pay_6 += 1;
                     wi.hits = 6;
                     wi.value_award = value_award_6;
                     winner.push(wi.clone());
@@ -223,24 +223,24 @@ pub trait LottoLunesImpl: Storage<Data> +
         self.data::<Data>().winners.extend(winner.clone());
         //Distribuition of LUNES
         let mut value_award_next = 0;
-        if total_per_pay_2 == 0{
+        if total_per_pay_2 == 0 {
             value_award_next += value_award_2;
-        } 
-        if total_per_pay_3 == 0{
+        }
+        if total_per_pay_3 == 0 {
             value_award_next += value_award_3;
         }
-        if total_per_pay_4 == 0{
+        if total_per_pay_4 == 0 {
             value_award_next += value_award_4;
         }
-        if total_per_pay_5 == 0{
+        if total_per_pay_5 == 0 {
             value_award_next += value_award_5;
         }
-        if total_per_pay_6 == 0{
+        if total_per_pay_6 == 0 {
             value_award_next += value_award_6;
         }
         //if accumulated then 50% Lunes
-        if value_award_next != 0{
-            let payment_lunes = (value_award_next * 50) / 100;            
+        if value_award_next != 0 {
+            let payment_lunes = (value_award_next * 50) / 100;
             value_award_next -= payment_lunes;
             let owner_ = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
             Self::env()
@@ -260,7 +260,8 @@ pub trait LottoLunesImpl: Storage<Data> +
         }
         let games = self
             .data::<Data>()
-            .tickets.iter()
+            .tickets
+            .iter()
             .filter(|ticket| ticket.owner == Self::env().caller())
             .cloned()
             .rev()
@@ -274,24 +275,28 @@ pub trait LottoLunesImpl: Storage<Data> +
     #[ink(message)]
     #[modifiers(non_reentrant)]
     fn payment(&mut self, ticket_id: TicketId) -> Result<(), PSP22Error> {
-        if
-            let Some(_) = self
-                .data::<Data>()
-                .winners.iter()
-                .find(|winner| winner.owner == Self::env().caller() && winner.status == true && winner.ticket_id == ticket_id) 
-        {
+        if let Some(_) = self.data::<Data>().winners.iter().find(|winner| {
+            winner.owner == Self::env().caller()
+                && winner.status == true
+                && winner.ticket_id == ticket_id
+        }) {
             let index = self
                 .data::<Data>()
-                .winners.iter()
-                .position(|winner| winner.owner == Self::env().caller() && winner.status == true && winner.ticket_id == ticket_id)
-                .unwrap();            
+                .winners
+                .iter()
+                .position(|winner| {
+                    winner.owner == Self::env().caller()
+                        && winner.status == true
+                        && winner.ticket_id == ticket_id
+                })
+                .unwrap();
             //verify date received payment at 90 days
             let now = Self::env().block_timestamp();
             if now - self.data::<Data>().winners[index].date_create > 90 * 24 * 60 * 60 {
                 return Err(PSP22Error::Custom(LunesError::PaymentExpired.as_str()));
             }
             self.data::<Data>().winners[index].status = false;
-            
+
             let owner_ = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
             Self::env()
                 .transfer(owner_, self.data::<Data>().winners[index].value_award)
@@ -306,27 +311,28 @@ pub trait LottoLunesImpl: Storage<Data> +
     #[openbrush::modifiers(only_owner)]
     #[modifiers(non_reentrant)]
     fn payment_expired(&mut self, ticket_id: TicketId) -> Result<(), PSP22Error> {
-
-       if
-            let Some(_) = self
-                .data::<Data>()
-                .winners.iter()
-                .find(|winner| winner.status == true && winner.ticket_id == ticket_id) 
+        if let Some(_) = self
+            .data::<Data>()
+            .winners
+            .iter()
+            .find(|winner| winner.status == true && winner.ticket_id == ticket_id)
         {
             let index = self
                 .data::<Data>()
-                .winners.iter()
+                .winners
+                .iter()
                 .position(|winner| winner.status == true && winner.ticket_id == ticket_id)
-                .unwrap();            
+                .unwrap();
             //verify date received payment at 90 days
             let now = Self::env().block_timestamp();
             if now - self.data::<Data>().winners[index].date_create > (90 * 24 * 60 * 60) as u64 {
                 let owner = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
                 self.data::<Data>().winners[index].status = false;
-                Self::env().transfer(owner, self.data::<Data>().winners[index].value_award).unwrap();
+                Self::env()
+                    .transfer(owner, self.data::<Data>().winners[index].value_award)
+                    .unwrap();
                 return Ok(());
             }
-            
         }
         Err(PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))
     }
@@ -340,7 +346,8 @@ pub trait LottoLunesImpl: Storage<Data> +
         if raffle_id == 0 {
             _games = self
                 .data::<Data>()
-                .rafflies.iter()
+                .rafflies
+                .iter()
                 .cloned()
                 .rev()
                 .skip(((page - (1 as u64)) * (100 as u64)).try_into().unwrap())
@@ -349,7 +356,8 @@ pub trait LottoLunesImpl: Storage<Data> +
         } else {
             _games = self
                 .data::<Data>()
-                .rafflies.iter()
+                .rafflies
+                .iter()
                 .filter(|riff| riff.raffle_id == raffle_id)
                 .cloned()
                 .rev()
@@ -359,13 +367,15 @@ pub trait LottoLunesImpl: Storage<Data> +
         }
         Ok(_games)
     }
+
     /// Get Winner Raffle by id
     #[ink(message)]
     #[modifiers(non_reentrant)]
     fn winner_raffle(&mut self, raffle_id: u64) -> Result<Vec<LunesTicket>, PSP22Error> {
         let winners = self
             .data::<Data>()
-            .winners.iter()
+            .winners
+            .iter()
             .filter(|winner| winner.raffle_id == raffle_id)
             .cloned()
             .collect();
@@ -376,32 +386,111 @@ pub trait LottoLunesImpl: Storage<Data> +
     #[modifiers(non_reentrant)]
     fn transfer_ticket_to(&mut self, to: AccountId, ticket_id: TicketId) -> Result<(), PSP22Error> {
         let caller = Self::env().caller();
-        if
-            let Some(_) = self
-                .data::<Data>()
-                .tickets.iter()
-                .find(|ticket| ticket.owner == caller && ticket.ticket_id == ticket_id)
+        if self
+            .data::<Data>()
+            .tickets
+            .iter()
+            .any(|ticket| ticket.owner == caller && ticket.ticket_id == ticket_id)
         {
             let index = self
                 .data::<Data>()
-                .tickets.iter()
+                .tickets
+                .iter()
                 .position(|ticket| ticket.owner == caller && ticket.ticket_id == ticket_id)
-                .unwrap();     
+                .unwrap();
             //verify raffel active
             let raffler_id = self.data::<Data>().tickets[index].raffle_id;
             let index_raffle = self
                 .data::<Data>()
-                .rafflies.iter()
-                .position(|raffle| raffle.status == true && raffle.raffle_id == raffler_id);     
+                .rafflies
+                .iter()
+                .position(|raffle| raffle.status && raffle.raffle_id == raffler_id);
             if index_raffle.is_none() {
                 return Err(PSP22Error::Custom(LunesError::RaffleNotActive.as_str()));
-            }  
+            }
             //Do transfer
             self.data::<Data>().tickets[index].owner = to;
             return Ok(());
-
         }
         Err(PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))
+    }
+    /// Return All Raffle with count page
+    #[ink(message)]
+    fn all_raffle_page(&mut self, page: u64, done: bool) -> Result<PageListRaffle, PSP22Error> {
+        if page == 0 {
+            return Err(PSP22Error::Custom(LunesError::InvalidPage.as_str()));
+        }
+        let mut _games: Vec<LottoLunes> = Vec::new();
+        _games = self
+            .data::<Data>()
+            .rafflies
+            .iter()
+            .filter(|riff| riff.status_done == done)
+            .cloned()
+            .rev()
+            .skip(((page - (1 as u64)) * (100 as u64)).try_into().unwrap())
+            .take(100)
+            .collect();
+        let count = self.data::<Data>().rafflies.iter().count() as u64;
+
+        Ok(PageListRaffle {
+            count: count.clone(),
+            page,
+            loto_lunes: _games,
+        })
+    }
+    /// List all Game page
+    #[ink(message)]
+    fn my_games_page(&mut self, page: u64, done: bool) -> Result<PageListTicket, PSP22Error> {
+        if page == 0 {
+            return Err(PSP22Error::Custom(LunesError::InvalidPage.as_str()));
+        }
+        let  tickets:Vec<LunesTicket> = self
+            .data::<Data>()
+            .tickets
+            .iter()
+            .filter(|ticket| ticket.owner == Self::env().caller() && ticket.status == done)
+            .cloned()
+            .rev()
+            .skip(((page - 1) * (100 as u64)).try_into().unwrap())
+            .take(100)
+            .collect();
+        let count = self
+            .data::<Data>()
+            .tickets
+            .iter()
+            .filter(|ticket| ticket.owner == Self::env().caller() && ticket.status == done)
+            .count() as u64;
+
+        Ok(PageListTicket {
+            count: count.clone(),
+            page,
+            tickets
+        })
+    }
+    //Chage Tax Lunes
+    #[ink(message)]
+    #[openbrush::modifiers(only_owner)]
+    #[modifiers(non_reentrant)]
+    fn change_tx(&mut self, new_tx: u64) -> Result<(), PSP22Error>{
+        self.data::<Data>().tx_lunes = new_tx;
+        Ok(())
+    }
+     //Chage Tax Lunes
+     #[ink(message)]
+    fn info_contract(&mut self) -> Result<InfoContract, ()>{
+        let count_tickets = self
+            .data::<Data>()
+            .tickets
+            .iter()
+            .count() as u64;
+        let count_rafflies = self.data::<Data>().rafflies.iter().count() as u64;
+
+        Ok(InfoContract{
+            tx_lunes: self.data::<Data>().tx_lunes,
+            count_lotto:count_rafflies,
+            count_tickets
+        })
     }
 }
 pub trait Internal: Storage<Data> {
@@ -409,11 +498,12 @@ pub trait Internal: Storage<Data> {
     fn check_amount(
         &self,
         transferred_value: Balance,
-        num_raffle: Vec<ListNumRaffle>
+        num_raffle: Vec<ListNumRaffle>,
     ) -> Result<u64, PSP22Error> {
         let raffle_active = self
             .data::<Data>()
-            .rafflies.iter()
+            .rafflies
+            .iter()
             .find(|raffle| raffle.status);
         if raffle_active.is_none() {
             return Err(PSP22Error::Custom(LunesError::RaffleNotActive.as_str()));
@@ -421,13 +511,13 @@ pub trait Internal: Storage<Data> {
         let price_total = raffle_active.unwrap().price * (num_raffle.len() as u128);
         if price_total <= transferred_value {
             for vet_num in num_raffle {
-                let vec_ = vec![
+                let vec_ = [
                     vet_num.num_1,
                     vet_num.num_2,
                     vet_num.num_3,
                     vet_num.num_4,
                     vet_num.num_5,
-                    vet_num.num_6
+                    vet_num.num_6,
                 ];
                 let mut duplicates = Vec::new();
 
@@ -455,7 +545,7 @@ pub trait Internal: Storage<Data> {
             }
             return Ok(raffle_active.unwrap().raffle_id);
         }
-        return Err(PSP22Error::Custom(LunesError::BadMintValue.as_str()));
+        Err(PSP22Error::Custom(LunesError::BadMintValue.as_str()))
     }
 
     fn create_ticket(
@@ -463,7 +553,7 @@ pub trait Internal: Storage<Data> {
         raffle_id: u64,
         to: AccountId,
         num_raffle: Vec<ListNumRaffle>,
-        date_block: u64
+        date_block: u64,
     ) -> Result<(), PSP22Error> {
         for vet_num in num_raffle {
             let ticket_id = self.data::<Data>().next_ticket_id;
@@ -475,13 +565,13 @@ pub trait Internal: Storage<Data> {
                     vet_num.num_3,
                     vet_num.num_4,
                     vet_num.num_5,
-                    vet_num.num_6
+                    vet_num.num_6,
                 ],
                 date_create: date_block,
                 raffle_id,
                 status: false,
-                value_award: 0 as u128,
-                hits: 0 as u64,
+                value_award: 0_u128,
+                hits: 0_u64,
                 ticket_id,
             };
             self.data::<Data>().next_ticket_id += 1;
@@ -492,7 +582,6 @@ pub trait Internal: Storage<Data> {
     }
     /// Generates a seed based on the list of players and the block number and timestamp
     fn seed(&self, seed: u64) -> u64 {
-        
         let timestamp = Self::env().block_timestamp() + seed;
         let block_number = Self::env().block_number() as u64 + seed;
 
@@ -501,16 +590,16 @@ pub trait Internal: Storage<Data> {
 
     fn random(&self) -> Vec<u64> {
         let mut unique_numbers = Vec::new();
-        let mut increment:u64 = 0;
+        let mut increment: u64 = 0;
         while unique_numbers.len() < 6 {
             // Generate the seed using the existing seed function
-            let mut x = self.seed(Self::env().block_timestamp()+ increment);
-    
+            let mut x = self.seed(Self::env().block_timestamp() + increment);
+
             // Manipulate the seed to get a pseudo-random result
             x ^= x << 13;
             x ^= x >> 7;
             x ^= x << 17;
-    
+
             // Map the random number to the range [1, 60]
             let random_number = ((x % 60) + 1) as u64;
             increment += random_number;
@@ -519,8 +608,7 @@ pub trait Internal: Storage<Data> {
                 unique_numbers.push(random_number);
             }
         }
-    
+
         unique_numbers
     }
-    
 }

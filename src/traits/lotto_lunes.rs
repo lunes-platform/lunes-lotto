@@ -27,4 +27,12 @@ pub trait LottoLunes {
     fn payment_expired(&mut self, ticket_id: u64) -> Result<(), ()>;
     #[ink(message)]
     fn transfer_ticket_to(&mut self, to: AccountId, ticket_id: u64) -> Result<(), ()>; 
+    #[ink(message)]
+    fn all_raffle_page(&mut self, raffle_id: u64, page: u64) -> Result<(), ()>;
+    #[ink(message)]
+    fn my_games_page(&mut self, page: u64) -> Result<(), ()>;
+    #[ink(message)]
+    fn info_contract(&mut self) -> Result<(), ()>;
+    #[ink(message)]
+    fn change_tx(&mut self, new_tx: u64) -> Result<(), ()>;
 }
