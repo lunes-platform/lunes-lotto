@@ -103,25 +103,25 @@ pub trait LottoLunesImpl:
         {
             return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
         } else {
-            let new_reffer_index = self
+            let new_raffle_index = self
                 .data::<Data>()
                 .rafflies
                 .iter()
                 .position(|raffle| raffle.raffle_id == back_raffle_id + 1);
-            let back_reffer_index = self
+            let back_raffle_index = self
                 .data::<Data>()
                 .rafflies
                 .iter()
                 .position(|raffle| raffle.raffle_id == back_raffle_id && raffle.status_done);
 
-            if back_reffer_index.is_none() {
+            if back_raffle_index.is_none() {
                 return Err(PSP22Error::Custom(LunesError::BackRaffleNotFound.as_str()));
             }
             let value_award_next =
-                self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
-            if new_reffer_index.is_none() {
+                self.data::<Data>().rafflies[back_raffle_index.unwrap()].total_accumulated_next;
+            if new_raffle_index.is_none() {
                 let date_block = Self::env().block_timestamp();
-                let price_ticket = self.data::<Data>().rafflies[back_reffer_index.unwrap()].price;
+                let price_ticket = self.data::<Data>().rafflies[back_raffle_index.unwrap()].price;
 
                 self.data::<Data>().rafflies.push(LottoLunes {
                     raffle_id: next_id,
@@ -136,9 +136,8 @@ pub trait LottoLunesImpl:
                 });
                 self.data::<Data>().next_id += 1;
             } else {
-                self.data::<Data>().rafflies[new_reffer_index.unwrap()].status = true;
-                self.data::<Data>().rafflies[new_reffer_index.unwrap()].total_accumulated =
-                    value_award_next;
+                self.data::<Data>().rafflies[new_raffle_index.unwrap()].status = true;
+                self.data::<Data>().rafflies[new_raffle_index.unwrap()].total_accumulated += value_award_next;
             }
         }
         Ok(())
