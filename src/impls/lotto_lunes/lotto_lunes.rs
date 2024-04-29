@@ -107,7 +107,7 @@ pub trait LottoLunesImpl:
                 .data::<Data>()
                 .rafflies
                 .iter()
-                .position(|raffle| raffle.raffle_id == back_raffle_id +1);
+                .position(|raffle| raffle.raffle_id == back_raffle_id + 1);
             let back_reffer_index = self
                 .data::<Data>()
                 .rafflies
@@ -118,11 +118,11 @@ pub trait LottoLunesImpl:
                 return Err(PSP22Error::Custom(LunesError::BackRaffleNotFound.as_str()));
             }
             let value_award_next =
-                    self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
-            if new_reffer_index.is_none() {                
+                self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
+            if new_reffer_index.is_none() {
                 let date_block = Self::env().block_timestamp();
                 let price_ticket = self.data::<Data>().rafflies[back_reffer_index.unwrap()].price;
-                
+
                 self.data::<Data>().rafflies.push(LottoLunes {
                     raffle_id: next_id,
                     num_raffle: Vec::new(),
@@ -135,9 +135,10 @@ pub trait LottoLunesImpl:
                     date_create: date_block,
                 });
                 self.data::<Data>().next_id += 1;
-            }else{
+            } else {
                 self.data::<Data>().rafflies[new_reffer_index.unwrap()].status = true;
-                self.data::<Data>().rafflies[new_reffer_index.unwrap()].total_accumulated = value_award_next;
+                self.data::<Data>().rafflies[new_reffer_index.unwrap()].total_accumulated =
+                    value_award_next;
             }
         }
         Ok(())
@@ -177,12 +178,23 @@ pub trait LottoLunesImpl:
 
         //find Winner
         let mut winner: Vec<LunesTicket> = Vec::new();
-
+        
+        // Filtrar e coletar as posições dos tickets
+        let positions: Vec<usize> = self.data::<Data>()
+            .tickets
+            .iter()
+            .enumerate()
+            .filter(|(_, ticket)| ticket.raffle_id == raffle_id)
+            .map(|(position, _)| position)
+            .collect();
+        for position in positions {
+            self.data::<Data>().tickets[position].status = true;
+        }
         let mut tickets = self
             .data::<Data>()
             .tickets
             .iter()
-            .filter(|ticket| ticket.raffle_id == raffle_id)            
+            .filter(|ticket| ticket.raffle_id == raffle_id)
             .collect::<Vec<&LunesTicket>>();
 
         let mut total_per_pay_2 = 0;
@@ -190,12 +202,15 @@ pub trait LottoLunesImpl:
         let mut total_per_pay_4 = 0;
         let mut total_per_pay_5 = 0;
         let mut total_per_pay_6 = 0;
+        
+
         for w in tickets.iter_mut() {
             let game_raffle = w.game_raffle.clone();
             let matching_numbers = game_raffle
                 .iter()
                 .filter(|&num| num_raffle.clone().contains(num))
                 .count();
+
             let mut wi = w.clone();
             wi.status = true;
             wi.date_create = Self::env().block_timestamp();
@@ -444,7 +459,12 @@ pub trait LottoLunesImpl:
             .skip(((page - (1 as u64)) * (100 as u64)).try_into().unwrap())
             .take(100)
             .collect();
-        let count = self.data::<Data>().rafflies.iter().filter(|riff| riff.status_done == done).count() as u64;
+        let count = self
+            .data::<Data>()
+            .rafflies
+            .iter()
+            .filter(|riff| riff.status_done == done)
+            .count() as u64;
 
         Ok(PageListRaffle {
             count: count.clone(),
