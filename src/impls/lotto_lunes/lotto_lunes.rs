@@ -117,11 +117,12 @@ pub trait LottoLunesImpl:
             if back_reffer_index.is_none() {
                 return Err(PSP22Error::Custom(LunesError::BackRaffleNotFound.as_str()));
             }
+            let value_award_next =
+                    self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
             if new_reffer_index.is_none() {                
                 let date_block = Self::env().block_timestamp();
                 let price_ticket = self.data::<Data>().rafflies[back_reffer_index.unwrap()].price;
-                let value_award_next =
-                    self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
+                
                 self.data::<Data>().rafflies.push(LottoLunes {
                     raffle_id: next_id,
                     num_raffle: Vec::new(),
@@ -136,9 +137,9 @@ pub trait LottoLunesImpl:
                 self.data::<Data>().next_id += 1;
             }else{
                 self.data::<Data>().rafflies[new_reffer_index.unwrap()].status = true;
+                self.data::<Data>().rafflies[new_reffer_index.unwrap()].total_accumulated = value_award_next;
             }
         }
-
         Ok(())
     }
     /// Do Raffle in the date
@@ -181,8 +182,9 @@ pub trait LottoLunesImpl:
             .data::<Data>()
             .tickets
             .iter()
-            .filter(|ticket| ticket.raffle_id == raffle_id)
+            .filter(|ticket| ticket.raffle_id == raffle_id)            
             .collect::<Vec<&LunesTicket>>();
+
         let mut total_per_pay_2 = 0;
         let mut total_per_pay_3 = 0;
         let mut total_per_pay_4 = 0;
