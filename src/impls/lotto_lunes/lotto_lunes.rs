@@ -478,16 +478,31 @@ pub trait LottoLunesImpl:
         if page == 0 {
             return Err(PSP22Error::Custom(LunesError::InvalidPage.as_str()));
         }
-        let tickets: Vec<LunesTicket> = self
-            .data::<Data>()
-            .tickets
-            .iter()
-            .filter(|ticket| ticket.owner == Self::env().caller() && ticket.status == done)
-            .cloned()
-            .rev()
-            .skip(((page - 1) * (100 as u64)).try_into().unwrap())
-            .take(100)
-            .collect();
+        let mut _tickets_: Vec<LunesTicket> = Vec::new();
+        if done {
+            _tickets_ = self
+                .data::<Data>()
+                .tickets
+                .iter()
+                .filter(|ticket| ticket.owner == Self::env().caller() && ticket.status == done)
+                .cloned()
+                .rev()
+                .skip(((page - 1) * (100 as u64)).try_into().unwrap())
+                .take(100)
+                .collect();
+        }else{
+            _tickets_ = self
+                .data::<Data>()
+                .tickets
+                .iter()
+                .filter(|ticket| ticket.owner == Self::env().caller())
+                .cloned()
+                .rev()
+                .skip(((page - 1) * (100 as u64)).try_into().unwrap())
+                .take(100)
+                .collect();
+        }
+         
         let count = self
             .data::<Data>()
             .tickets
@@ -498,7 +513,7 @@ pub trait LottoLunesImpl:
         Ok(PageListTicket {
             count: count.clone(),
             page,
-            tickets,
+            tickets:_tickets_,
         })
     }
     //Chage Tax Lunes
