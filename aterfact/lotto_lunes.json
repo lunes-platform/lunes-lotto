@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x3f7185357cf9265c7ab5f3983855afc0e0565374d0a4674b110a6ca7f61ec6b2",
+    "hash": "0xdd7d04fdb4a7e099ad8f6fc6a1af226d4873c4a50c36d17bf5324589fd389808",
     "language": "ink! 4.2.1",
     "compiler": "rustc 1.74.1",
     "build_info": {
@@ -91,6 +91,33 @@
       {
         "args": [
           {
+            "label": "new_tx",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "ChangeTxInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "LottoLunesImpl::change_tx",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xe9267d95"
+      },
+      {
+        "args": [
+          {
             "label": "raffle_id",
             "type": {
               "displayName": [
@@ -123,7 +150,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 14
+          "type": 18
         },
         "selector": "0xfa914e67"
       },
@@ -134,27 +161,17 @@
             "type": {
               "displayName": [
                 "lottolunesimpl_external",
-                "MyGamesPageInput1"
+                "MyGamesInput1"
               ],
               "type": 0
-            }
-          },
-          {
-            "label": "done",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "MyGamesPageInput2"
-              ],
-              "type": 5
             }
           }
         ],
         "default": false,
         "docs": [
-          " List all Game page"
+          " List all Games the user has played"
         ],
-        "label": "LottoLunesImpl::my_games_page",
+        "label": "LottoLunesImpl::my_games",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -162,17 +179,75 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 20
         },
-        "selector": "0xb1b5f835"
+        "selector": "0x37ffb31b"
+      },
+      {
+        "args": [
+          {
+            "label": "ticket_id",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "PaymentExpiredInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Payable in LUNES to ticket expired for 90 days"
+        ],
+        "label": "LottoLunesImpl::payment_expired",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xc13e19b0"
+      },
+      {
+        "args": [
+          {
+            "label": "num_rifle",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "PlayLunesInput1"
+              ],
+              "type": 22
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Payable in LUNES"
+        ],
+        "label": "LottoLunesImpl::play_lunes",
+        "mutates": true,
+        "payable": true,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xc3e7705a"
       },
       {
         "args": [],
         "default": false,
         "docs": [
-          " Random Lotto"
+          " Do Raffle in the date"
         ],
-        "label": "LottoLunesImpl::random_lotto",
+        "label": "LottoLunesImpl::do_raffle_lotto",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -180,9 +255,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 21
+          "type": 24
         },
-        "selector": "0x1547d912"
+        "selector": "0x18c61709"
       },
       {
         "args": [
@@ -219,9 +294,101 @@
             "ink",
             "MessageResult"
           ],
-          "type": 23
+          "type": 14
         },
         "selector": "0xe7f0d536"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "LottoLunesImpl::info_contract",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 26
+        },
+        "selector": "0xef464e02"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [
+          " Random Lotto"
+        ],
+        "label": "LottoLunesImpl::random_lotto",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 24
+        },
+        "selector": "0x1547d912"
+      },
+      {
+        "args": [
+          {
+            "label": "raffle_id",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "WinnerRaffleInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Get Winner Raffle by id"
+        ],
+        "label": "LottoLunesImpl::winner_raffle",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 20
+        },
+        "selector": "0x13e11c31"
+      },
+      {
+        "args": [
+          {
+            "label": "back_raffle_id",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "CreateAutomaticLottoInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Create Automatic Raffle"
+        ],
+        "label": "LottoLunesImpl::create_automatic_lotto",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0xa0e5ce21"
       },
       {
         "args": [
@@ -258,85 +425,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 23
+          "type": 14
         },
         "selector": "0xb8d64361"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [
-          " Do Raffle in the date"
-        ],
-        "label": "LottoLunesImpl::do_raffle_lotto",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 21
-        },
-        "selector": "0x18c61709"
-      },
-      {
-        "args": [
-          {
-            "label": "num_rifle",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "PlayLunesInput1"
-              ],
-              "type": 25
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Payable in LUNES"
-        ],
-        "label": "LottoLunesImpl::play_lunes",
-        "mutates": true,
-        "payable": true,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 23
-        },
-        "selector": "0xc3e7705a"
-      },
-      {
-        "args": [
-          {
-            "label": "back_raffle_id",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "CreateAutomaticLottoInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Create Automatic Raffle"
-        ],
-        "label": "LottoLunesImpl::create_automatic_lotto",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 23
-        },
-        "selector": "0xa0e5ce21"
       },
       {
         "args": [
@@ -345,33 +436,27 @@
             "type": {
               "displayName": [
                 "lottolunesimpl_external",
-                "MyGamesInput1"
+                "MyGamesPageInput1"
               ],
               "type": 0
+            }
+          },
+          {
+            "label": "done",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "MyGamesPageInput2"
+              ],
+              "type": 5
             }
           }
         ],
         "default": false,
         "docs": [
-          " List all Games the user has played"
+          " List all Game page"
         ],
-        "label": "LottoLunesImpl::my_games",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 27
-        },
-        "selector": "0x37ffb31b"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "LottoLunesImpl::info_contract",
+        "label": "LottoLunesImpl::my_games_page",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -381,34 +466,7 @@
           ],
           "type": 29
         },
-        "selector": "0xef464e02"
-      },
-      {
-        "args": [
-          {
-            "label": "new_tx",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "ChangeTxInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "LottoLunesImpl::change_tx",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 23
-        },
-        "selector": "0xe9267d95"
+        "selector": "0xb1b5f835"
       },
       {
         "args": [
@@ -417,7 +475,7 @@
             "type": {
               "displayName": [
                 "lottolunesimpl_external",
-                "PaymentExpiredInput1"
+                "PaymentInput1"
               ],
               "type": 0
             }
@@ -425,9 +483,9 @@
         ],
         "default": false,
         "docs": [
-          " Payable in LUNES to ticket expired for 90 days"
+          " Payable in LUNES to ticket"
         ],
-        "label": "LottoLunesImpl::payment_expired",
+        "label": "LottoLunesImpl::payment",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -435,9 +493,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 23
+          "type": 14
         },
-        "selector": "0xc13e19b0"
+        "selector": "0x27cd2c5b"
       },
       {
         "args": [
@@ -477,64 +535,6 @@
           "type": 32
         },
         "selector": "0x975a0644"
-      },
-      {
-        "args": [
-          {
-            "label": "raffle_id",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "WinnerRaffleInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Get Winner Raffle by id"
-        ],
-        "label": "LottoLunesImpl::winner_raffle",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 27
-        },
-        "selector": "0x13e11c31"
-      },
-      {
-        "args": [
-          {
-            "label": "ticket_id",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "PaymentInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Payable in LUNES to ticket"
-        ],
-        "label": "LottoLunesImpl::payment",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 23
-        },
-        "selector": "0x27cd2c5b"
       },
       {
         "args": [],
@@ -1076,7 +1076,7 @@
               {
                 "fields": [
                   {
-                    "type": 1
+                    "type": 12
                   }
                 ],
                 "index": 0,
@@ -1097,7 +1097,7 @@
         "params": [
           {
             "name": "T",
-            "type": 1
+            "type": 12
           },
           {
             "name": "E",
@@ -1222,7 +1222,7 @@
               {
                 "fields": [
                   {
-                    "type": 20
+                    "type": 1
                   }
                 ],
                 "index": 0,
@@ -1243,7 +1243,7 @@
         "params": [
           {
             "name": "T",
-            "type": 20
+            "type": 1
           },
           {
             "name": "E",
@@ -1259,32 +1259,41 @@
       "id": 20,
       "type": {
         "def": {
-          "composite": {
-            "fields": [
+          "variant": {
+            "variants": [
               {
-                "name": "count",
-                "type": 0,
-                "typeName": "u64"
+                "fields": [
+                  {
+                    "type": 21
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
               },
               {
-                "name": "page",
-                "type": 0,
-                "typeName": "u64"
-              },
-              {
-                "name": "tickets",
-                "type": 6,
-                "typeName": "Vec<LunesTicket>"
+                "fields": [
+                  {
+                    "type": 13
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
               }
             ]
           }
         },
+        "params": [
+          {
+            "name": "T",
+            "type": 21
+          },
+          {
+            "name": "E",
+            "type": 13
+          }
+        ],
         "path": [
-          "lotto_lunes_pkg",
-          "impls",
-          "lotto_lunes",
-          "data",
-          "PageListTicket"
+          "Result"
         ]
       }
     },
@@ -1297,7 +1306,7 @@
               {
                 "fields": [
                   {
-                    "type": 22
+                    "type": 6
                   }
                 ],
                 "index": 0,
@@ -1306,7 +1315,7 @@
               {
                 "fields": [
                   {
-                    "type": 13
+                    "type": 16
                   }
                 ],
                 "index": 1,
@@ -1318,11 +1327,11 @@
         "params": [
           {
             "name": "T",
-            "type": 22
+            "type": 6
           },
           {
             "name": "E",
-            "type": 13
+            "type": 16
           }
         ],
         "path": [
@@ -1334,140 +1343,14 @@
       "id": 22,
       "type": {
         "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 3
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 3
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 23,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 24
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 13
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 24
-          },
-          {
-            "name": "E",
-            "type": 13
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 24,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 12
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 12
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 25,
-      "type": {
-        "def": {
           "sequence": {
-            "type": 26
+            "type": 23
           }
         }
       }
     },
     {
-      "id": 26,
+      "id": 23,
       "type": {
         "def": {
           "composite": {
@@ -1515,7 +1398,7 @@
       }
     },
     {
-      "id": 27,
+      "id": 24,
       "type": {
         "def": {
           "variant": {
@@ -1523,7 +1406,7 @@
               {
                 "fields": [
                   {
-                    "type": 28
+                    "type": 25
                   }
                 ],
                 "index": 0,
@@ -1544,7 +1427,7 @@
         "params": [
           {
             "name": "T",
-            "type": 28
+            "type": 25
           },
           {
             "name": "E",
@@ -1557,7 +1440,7 @@
       }
     },
     {
-      "id": 28,
+      "id": 25,
       "type": {
         "def": {
           "variant": {
@@ -1565,7 +1448,7 @@
               {
                 "fields": [
                   {
-                    "type": 6
+                    "type": 3
                   }
                 ],
                 "index": 0,
@@ -1586,7 +1469,7 @@
         "params": [
           {
             "name": "T",
-            "type": 6
+            "type": 3
           },
           {
             "name": "E",
@@ -1595,6 +1478,123 @@
         ],
         "path": [
           "Result"
+        ]
+      }
+    },
+    {
+      "id": 26,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 27
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 13
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 27
+          },
+          {
+            "name": "E",
+            "type": 13
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 27,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 12
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 28
+          },
+          {
+            "name": "E",
+            "type": 12
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 28,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "tx_lunes",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "count_lotto",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "count_tickets",
+                "type": 0,
+                "typeName": "u64"
+              }
+            ]
+          }
+        },
+        "path": [
+          "lotto_lunes_pkg",
+          "impls",
+          "lotto_lunes",
+          "data",
+          "InfoContract"
         ]
       }
     },
@@ -1658,7 +1658,7 @@
               {
                 "fields": [
                   {
-                    "type": 12
+                    "type": 16
                   }
                 ],
                 "index": 1,
@@ -1674,7 +1674,7 @@
           },
           {
             "name": "E",
-            "type": 12
+            "type": 16
           }
         ],
         "path": [
@@ -1689,19 +1689,19 @@
           "composite": {
             "fields": [
               {
-                "name": "tx_lunes",
+                "name": "count",
                 "type": 0,
                 "typeName": "u64"
               },
               {
-                "name": "count_lotto",
+                "name": "page",
                 "type": 0,
                 "typeName": "u64"
               },
               {
-                "name": "count_tickets",
-                "type": 0,
-                "typeName": "u64"
+                "name": "tickets",
+                "type": 6,
+                "typeName": "Vec<LunesTicket>"
               }
             ]
           }
@@ -1711,7 +1711,7 @@
           "impls",
           "lotto_lunes",
           "data",
-          "InfoContract"
+          "PageListTicket"
         ]
       }
     },
