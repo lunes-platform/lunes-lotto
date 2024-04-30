@@ -117,8 +117,7 @@ pub trait LottoLunesImpl:
             if back_reffer_index.is_none() {
                 return Err(PSP22Error::Custom(LunesError::BackRaffleNotFound.as_str()));
             }
-            let value_award_next =
-                self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next;
+            let value_award_next = self.data::<Data>().rafflies[back_reffer_index.unwrap()].total_accumulated_next.clone();
             if new_reffer_index.is_none() {
                 let date_block = Self::env().block_timestamp();
                 let price_ticket = self.data::<Data>().rafflies[back_reffer_index.unwrap()].price;
@@ -137,8 +136,7 @@ pub trait LottoLunesImpl:
                 self.data::<Data>().next_id += 1;
             } else {
                 self.data::<Data>().rafflies[new_reffer_index.unwrap()].status = true;
-                self.data::<Data>().rafflies[new_reffer_index.unwrap()].total_accumulated =
-                    value_award_next;
+                self.data::<Data>().rafflies[new_reffer_index.unwrap()].total_accumulated += value_award_next;
             }
         }
         Ok(())
@@ -457,7 +455,7 @@ pub trait LottoLunesImpl:
             .cloned()
             .rev()
             .skip(((page - (1 as u64)) * (100 as u64)).try_into().unwrap())
-            .take(100)
+            .take(100)           
             .collect();
         let count = self
             .data::<Data>()
@@ -465,6 +463,8 @@ pub trait LottoLunesImpl:
             .iter()
             .filter(|riff| riff.status_done == done)
             .count() as u64;
+        
+        _games.sort_by(|a, b| b.status.cmp(&a.status));
 
         Ok(PageListRaffle {
             count: count.clone(),
