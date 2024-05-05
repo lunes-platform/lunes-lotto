@@ -20,8 +20,9 @@ pub struct Data {
     pub next_ticket_id: RaffleId,
     pub rafflies: Vec<LottoLunes>,
     pub tickets: Vec<LunesTicket>,
-    pub winners: Vec<LunesTicket>,
-    pub tx_lunes: TxLunes
+    pub winners: Vec<LottoWin>,
+    pub tx_lunes: TxLunes,
+    pub total_accumulated_next: TotalAccumulated,
 }
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -47,6 +48,7 @@ pub struct LunesTicket{
     pub hits: Hits,
     pub owner: Owner,
     pub status: Status,
+    pub is_payment: Status,
     
 }
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
@@ -59,7 +61,23 @@ pub struct ListNumRaffle{
     pub num_5: u64,
     pub num_6: u64,
 }
-
+#[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub struct LottoWin{
+    pub date_create: u64,
+    pub raffle_id: RaffleId,
+    pub value_award_2: ValueAward,
+    pub quantity_2: u64,
+    pub value_award_3: ValueAward,
+    pub quantity_3: u64,
+    pub value_award_4: ValueAward,
+    pub quantity_4: u64,
+    pub value_award_5: ValueAward,
+    pub quantity_5: u64,
+    pub value_award_6: ValueAward,
+    pub quantity_6: u64,
+    pub fee_lunes: ValueAward,
+}
 #[derive(Debug, PartialEq, Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub struct PageListRaffle {

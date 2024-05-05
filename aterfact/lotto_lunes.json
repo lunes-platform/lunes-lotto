@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xdd7d04fdb4a7e099ad8f6fc6a1af226d4873c4a50c36d17bf5324589fd389808",
+    "hash": "0x1d546368ebd421c116154ebb2a620b3959d42d70bef2d7a5c6d72170ead10faa",
     "language": "ink! 4.2.1",
     "compiler": "rustc 1.74.1",
     "build_info": {
@@ -34,7 +34,7 @@
             "ink_primitives",
             "ConstructorResult"
           ],
-          "type": 11
+          "type": 13
         },
         "selector": "0x9bae9d5e"
       }
@@ -57,19 +57,19 @@
         "displayName": [
           "BlockNumber"
         ],
-        "type": 41
+        "type": 45
       },
       "chainExtension": {
         "displayName": [
           "ChainExtension"
         ],
-        "type": 42
+        "type": 46
       },
       "hash": {
         "displayName": [
           "Hash"
         ],
-        "type": 40
+        "type": 44
       },
       "maxEventTopics": 4,
       "timestamp": {
@@ -85,7 +85,7 @@
         "ink",
         "LangError"
       ],
-      "type": 13
+      "type": 15
     },
     "messages": [
       {
@@ -111,9 +111,38 @@
             "ink",
             "MessageResult"
           ],
-          "type": 14
+          "type": 16
         },
         "selector": "0xe9267d95"
+      },
+      {
+        "args": [
+          {
+            "label": "ticket_id",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "PaymentInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Payable in LUNES to ticket"
+        ],
+        "label": "LottoLunesImpl::payment",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0x27cd2c5b"
       },
       {
         "args": [
@@ -150,245 +179,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 20
         },
         "selector": "0xfa914e67"
-      },
-      {
-        "args": [
-          {
-            "label": "page",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "MyGamesInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " List all Games the user has played"
-        ],
-        "label": "LottoLunesImpl::my_games",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 20
-        },
-        "selector": "0x37ffb31b"
-      },
-      {
-        "args": [
-          {
-            "label": "ticket_id",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "PaymentExpiredInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Payable in LUNES to ticket expired for 90 days"
-        ],
-        "label": "LottoLunesImpl::payment_expired",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0xc13e19b0"
-      },
-      {
-        "args": [
-          {
-            "label": "num_rifle",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "PlayLunesInput1"
-              ],
-              "type": 22
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Payable in LUNES"
-        ],
-        "label": "LottoLunesImpl::play_lunes",
-        "mutates": true,
-        "payable": true,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0xc3e7705a"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [
-          " Do Raffle in the date"
-        ],
-        "label": "LottoLunesImpl::do_raffle_lotto",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 24
-        },
-        "selector": "0x18c61709"
-      },
-      {
-        "args": [
-          {
-            "label": "date_raffle",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "CreateRaffleLottoInput1"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "label": "price",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "CreateRaffleLottoInput2"
-              ],
-              "type": 4
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Create Raffle with Date, Price and Total Accumulated"
-        ],
-        "label": "LottoLunesImpl::create_raffle_lotto",
-        "mutates": true,
-        "payable": true,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0xe7f0d536"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "LottoLunesImpl::info_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0xef464e02"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [
-          " Random Lotto"
-        ],
-        "label": "LottoLunesImpl::random_lotto",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 24
-        },
-        "selector": "0x1547d912"
-      },
-      {
-        "args": [
-          {
-            "label": "raffle_id",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "WinnerRaffleInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Get Winner Raffle by id"
-        ],
-        "label": "LottoLunesImpl::winner_raffle",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 20
-        },
-        "selector": "0x13e11c31"
-      },
-      {
-        "args": [
-          {
-            "label": "back_raffle_id",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "CreateAutomaticLottoInput1"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Create Automatic Raffle"
-        ],
-        "label": "LottoLunesImpl::create_automatic_lotto",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0xa0e5ce21"
       },
       {
         "args": [
@@ -425,9 +218,164 @@
             "ink",
             "MessageResult"
           ],
-          "type": 14
+          "type": 16
         },
         "selector": "0xb8d64361"
+      },
+      {
+        "args": [
+          {
+            "label": "raffle_id",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "WinnerRaffleInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Get Winner Raffle by id"
+        ],
+        "label": "LottoLunesImpl::winner_raffle",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 22
+        },
+        "selector": "0x13e11c31"
+      },
+      {
+        "args": [
+          {
+            "label": "num_rifle",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "PlayLunesInput1"
+              ],
+              "type": 24
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Payable in LUNES"
+        ],
+        "label": "LottoLunesImpl::play_lunes",
+        "mutates": true,
+        "payable": true,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0xc3e7705a"
+      },
+      {
+        "args": [
+          {
+            "label": "date_raffle",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "CreateRaffleLottoInput1"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "price",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "CreateRaffleLottoInput2"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Create Raffle with Date, Price and Total Accumulated"
+        ],
+        "label": "LottoLunesImpl::create_raffle_lotto",
+        "mutates": true,
+        "payable": true,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0xe7f0d536"
+      },
+      {
+        "args": [
+          {
+            "label": "back_raffle_id",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "CreateAutomaticLottoInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Create Automatic Raffle"
+        ],
+        "label": "LottoLunesImpl::create_automatic_lotto",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0xa0e5ce21"
+      },
+      {
+        "args": [
+          {
+            "label": "ticket_id",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "PaymentExpiredInput1"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Payable in LUNES to ticket expired for 90 days"
+        ],
+        "label": "LottoLunesImpl::payment_expired",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 16
+        },
+        "selector": "0xc13e19b0"
       },
       {
         "args": [
@@ -464,18 +412,18 @@
             "ink",
             "MessageResult"
           ],
-          "type": 29
+          "type": 26
         },
         "selector": "0xb1b5f835"
       },
       {
         "args": [
           {
-            "label": "ticket_id",
+            "label": "page",
             "type": {
               "displayName": [
                 "lottolunesimpl_external",
-                "PaymentInput1"
+                "MyGamesInput1"
               ],
               "type": 0
             }
@@ -483,9 +431,9 @@
         ],
         "default": false,
         "docs": [
-          " Payable in LUNES to ticket"
+          " List all Games the user has played"
         ],
-        "label": "LottoLunesImpl::payment",
+        "label": "LottoLunesImpl::my_games",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -493,9 +441,45 @@
             "ink",
             "MessageResult"
           ],
-          "type": 14
+          "type": 29
         },
-        "selector": "0x27cd2c5b"
+        "selector": "0x37ffb31b"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [
+          " Random Lotto"
+        ],
+        "label": "LottoLunesImpl::random_lotto",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 31
+        },
+        "selector": "0x1547d912"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [
+          " Do Raffle in the date"
+        ],
+        "label": "LottoLunesImpl::do_raffle_lotto",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 31
+        },
+        "selector": "0x18c61709"
       },
       {
         "args": [
@@ -532,7 +516,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 32
+          "type": 33
         },
         "selector": "0x975a0644"
       },
@@ -540,17 +524,17 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "Ownable::owner",
-        "mutates": false,
+        "label": "LottoLunesImpl::info_contract",
+        "mutates": true,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 35
+          "type": 36
         },
-        "selector": "0x4fa43c8c"
+        "selector": "0xef464e02"
       },
       {
         "args": [],
@@ -564,7 +548,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 37
+          "type": 39
         },
         "selector": "0x5e228753"
       },
@@ -591,9 +575,25 @@
             "ink",
             "MessageResult"
           ],
-          "type": 37
+          "type": 39
         },
         "selector": "0x11f43efd"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::owner",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 42
+        },
+        "selector": "0x4fa43c8c"
       }
     ]
   },
@@ -646,7 +646,7 @@
                       "layout": {
                         "leaf": {
                           "key": "0x00000000",
-                          "ty": 6
+                          "ty": 11
                         }
                       },
                       "name": "winners"
@@ -659,6 +659,15 @@
                         }
                       },
                       "name": "tx_lunes"
+                    },
+                    {
+                      "layout": {
+                        "leaf": {
+                          "key": "0x00000000",
+                          "ty": 4
+                        }
+                      },
+                      "name": "total_accumulated_next"
                     }
                   ],
                   "name": "Data"
@@ -904,6 +913,11 @@
                 "name": "status",
                 "type": 5,
                 "typeName": "Status"
+              },
+              {
+                "name": "is_payment",
+                "type": 5,
+                "typeName": "Status"
               }
             ]
           }
@@ -960,12 +974,105 @@
       "id": 11,
       "type": {
         "def": {
+          "sequence": {
+            "type": 12
+          }
+        }
+      }
+    },
+    {
+      "id": 12,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "date_create",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "raffle_id",
+                "type": 0,
+                "typeName": "RaffleId"
+              },
+              {
+                "name": "value_award_2",
+                "type": 4,
+                "typeName": "ValueAward"
+              },
+              {
+                "name": "quantity_2",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "value_award_3",
+                "type": 4,
+                "typeName": "ValueAward"
+              },
+              {
+                "name": "quantity_3",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "value_award_4",
+                "type": 4,
+                "typeName": "ValueAward"
+              },
+              {
+                "name": "quantity_4",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "value_award_5",
+                "type": 4,
+                "typeName": "ValueAward"
+              },
+              {
+                "name": "quantity_5",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "value_award_6",
+                "type": 4,
+                "typeName": "ValueAward"
+              },
+              {
+                "name": "quantity_6",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "fee_lunes",
+                "type": 4,
+                "typeName": "ValueAward"
+              }
+            ]
+          }
+        },
+        "path": [
+          "lotto_lunes_pkg",
+          "impls",
+          "lotto_lunes",
+          "data",
+          "LottoWin"
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "type": {
+        "def": {
           "variant": {
             "variants": [
               {
                 "fields": [
                   {
-                    "type": 12
+                    "type": 14
                   }
                 ],
                 "index": 0,
@@ -974,7 +1081,7 @@
               {
                 "fields": [
                   {
-                    "type": 13
+                    "type": 15
                   }
                 ],
                 "index": 1,
@@ -986,11 +1093,11 @@
         "params": [
           {
             "name": "T",
-            "type": 12
+            "type": 14
           },
           {
             "name": "E",
-            "type": 13
+            "type": 15
           }
         ],
         "path": [
@@ -999,7 +1106,7 @@
       }
     },
     {
-      "id": 12,
+      "id": 14,
       "type": {
         "def": {
           "tuple": []
@@ -1007,7 +1114,7 @@
       }
     },
     {
-      "id": 13,
+      "id": 15,
       "type": {
         "def": {
           "variant": {
@@ -1026,90 +1133,6 @@
       }
     },
     {
-      "id": 14,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 15
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 13
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 15
-          },
-          {
-            "name": "E",
-            "type": 13
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 15,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 12
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 12
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
       "id": 16,
       "type": {
         "def": {
@@ -1118,7 +1141,91 @@
               {
                 "fields": [
                   {
-                    "type": 17,
+                    "type": 17
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 15
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 17
+          },
+          {
+            "name": "E",
+            "type": 15
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 14
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 14
+          },
+          {
+            "name": "E",
+            "type": 18
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 19,
                     "typeName": "String"
                   }
                 ],
@@ -1144,7 +1251,7 @@
               {
                 "fields": [
                   {
-                    "type": 17,
+                    "type": 19,
                     "typeName": "String"
                   }
                 ],
@@ -1164,95 +1271,11 @@
       }
     },
     {
-      "id": 17,
+      "id": 19,
       "type": {
         "def": {
           "primitive": "str"
         }
-      }
-    },
-    {
-      "id": 18,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 19
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 13
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 19
-          },
-          {
-            "name": "E",
-            "type": 13
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 19,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 1
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 1
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
       }
     },
     {
@@ -1273,7 +1296,7 @@
               {
                 "fields": [
                   {
-                    "type": 13
+                    "type": 15
                   }
                 ],
                 "index": 1,
@@ -1289,7 +1312,7 @@
           },
           {
             "name": "E",
-            "type": 13
+            "type": 15
           }
         ],
         "path": [
@@ -1306,7 +1329,7 @@
               {
                 "fields": [
                   {
-                    "type": 6
+                    "type": 1
                   }
                 ],
                 "index": 0,
@@ -1315,7 +1338,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -1327,11 +1350,11 @@
         "params": [
           {
             "name": "T",
-            "type": 6
+            "type": 1
           },
           {
             "name": "E",
-            "type": 16
+            "type": 18
           }
         ],
         "path": [
@@ -1343,14 +1366,98 @@
       "id": 22,
       "type": {
         "def": {
-          "sequence": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 23
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 15
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
             "type": 23
+          },
+          {
+            "name": "E",
+            "type": 15
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 11
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 11
+          },
+          {
+            "name": "E",
+            "type": 18
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 25
           }
         }
       }
     },
     {
-      "id": 23,
+      "id": 25,
       "type": {
         "def": {
           "composite": {
@@ -1398,90 +1505,6 @@
       }
     },
     {
-      "id": 24,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 25
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 13
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 25
-          },
-          {
-            "name": "E",
-            "type": 13
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 25,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 3
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 3
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
       "id": 26,
       "type": {
         "def": {
@@ -1499,7 +1522,7 @@
               {
                 "fields": [
                   {
-                    "type": 13
+                    "type": 15
                   }
                 ],
                 "index": 1,
@@ -1515,7 +1538,7 @@
           },
           {
             "name": "E",
-            "type": 13
+            "type": 15
           }
         ],
         "path": [
@@ -1541,7 +1564,7 @@
               {
                 "fields": [
                   {
-                    "type": 12
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -1557,7 +1580,7 @@
           },
           {
             "name": "E",
-            "type": 12
+            "type": 18
           }
         ],
         "path": [
@@ -1567,123 +1590,6 @@
     },
     {
       "id": 28,
-      "type": {
-        "def": {
-          "composite": {
-            "fields": [
-              {
-                "name": "tx_lunes",
-                "type": 0,
-                "typeName": "u64"
-              },
-              {
-                "name": "count_lotto",
-                "type": 0,
-                "typeName": "u64"
-              },
-              {
-                "name": "count_tickets",
-                "type": 0,
-                "typeName": "u64"
-              }
-            ]
-          }
-        },
-        "path": [
-          "lotto_lunes_pkg",
-          "impls",
-          "lotto_lunes",
-          "data",
-          "InfoContract"
-        ]
-      }
-    },
-    {
-      "id": 29,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 30
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 13
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 30
-          },
-          {
-            "name": "E",
-            "type": 13
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 30,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 31
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 16
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 31
-          },
-          {
-            "name": "E",
-            "type": 16
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 31,
       "type": {
         "def": {
           "composite": {
@@ -1716,7 +1622,7 @@
       }
     },
     {
-      "id": 32,
+      "id": 29,
       "type": {
         "def": {
           "variant": {
@@ -1724,7 +1630,7 @@
               {
                 "fields": [
                   {
-                    "type": 33
+                    "type": 30
                   }
                 ],
                 "index": 0,
@@ -1733,7 +1639,7 @@
               {
                 "fields": [
                   {
-                    "type": 13
+                    "type": 15
                   }
                 ],
                 "index": 1,
@@ -1745,11 +1651,137 @@
         "params": [
           {
             "name": "T",
-            "type": 33
+            "type": 30
           },
           {
             "name": "E",
-            "type": 13
+            "type": 15
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 6
+          },
+          {
+            "name": "E",
+            "type": 18
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 31,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 32
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 15
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 32
+          },
+          {
+            "name": "E",
+            "type": 15
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 3
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 3
+          },
+          {
+            "name": "E",
+            "type": 18
           }
         ],
         "path": [
@@ -1775,7 +1807,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 15
                   }
                 ],
                 "index": 1,
@@ -1791,7 +1823,7 @@
           },
           {
             "name": "E",
-            "type": 16
+            "type": 15
           }
         ],
         "path": [
@@ -1801,6 +1833,48 @@
     },
     {
       "id": 34,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 35
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 35
+          },
+          {
+            "name": "E",
+            "type": 18
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 35,
       "type": {
         "def": {
           "composite": {
@@ -1833,7 +1907,7 @@
       }
     },
     {
-      "id": 35,
+      "id": 36,
       "type": {
         "def": {
           "variant": {
@@ -1841,7 +1915,7 @@
               {
                 "fields": [
                   {
-                    "type": 36
+                    "type": 37
                   }
                 ],
                 "index": 0,
@@ -1850,7 +1924,7 @@
               {
                 "fields": [
                   {
-                    "type": 13
+                    "type": 15
                   }
                 ],
                 "index": 1,
@@ -1862,11 +1936,11 @@
         "params": [
           {
             "name": "T",
-            "type": 36
+            "type": 37
           },
           {
             "name": "E",
-            "type": 13
+            "type": 15
           }
         ],
         "path": [
@@ -1875,7 +1949,234 @@
       }
     },
     {
-      "id": 36,
+      "id": 37,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 38
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 14
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 38
+          },
+          {
+            "name": "E",
+            "type": 14
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 38,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "tx_lunes",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "count_lotto",
+                "type": 0,
+                "typeName": "u64"
+              },
+              {
+                "name": "count_tickets",
+                "type": 0,
+                "typeName": "u64"
+              }
+            ]
+          }
+        },
+        "path": [
+          "lotto_lunes_pkg",
+          "impls",
+          "lotto_lunes",
+          "data",
+          "InfoContract"
+        ]
+      }
+    },
+    {
+      "id": 39,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 40
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 15
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 40
+          },
+          {
+            "name": "E",
+            "type": 15
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 40,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 14
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 41
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 14
+          },
+          {
+            "name": "E",
+            "type": 41
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 41,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "CallerIsNotOwner"
+              },
+              {
+                "index": 1,
+                "name": "NewOwnerIsZero"
+              }
+            ]
+          }
+        },
+        "path": [
+          "openbrush_contracts",
+          "traits",
+          "errors",
+          "ownable",
+          "OwnableError"
+        ]
+      }
+    },
+    {
+      "id": 42,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 43
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 15
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 43
+          },
+          {
+            "name": "E",
+            "type": 15
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 43,
       "type": {
         "def": {
           "variant": {
@@ -1908,117 +2209,7 @@
       }
     },
     {
-      "id": 37,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 38
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 13
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 38
-          },
-          {
-            "name": "E",
-            "type": 13
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 38,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 12
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 39
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 12
-          },
-          {
-            "name": "E",
-            "type": 39
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 39,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "index": 0,
-                "name": "CallerIsNotOwner"
-              },
-              {
-                "index": 1,
-                "name": "NewOwnerIsZero"
-              }
-            ]
-          }
-        },
-        "path": [
-          "openbrush_contracts",
-          "traits",
-          "errors",
-          "ownable",
-          "OwnableError"
-        ]
-      }
-    },
-    {
-      "id": 40,
+      "id": 44,
       "type": {
         "def": {
           "composite": {
@@ -2038,7 +2229,7 @@
       }
     },
     {
-      "id": 41,
+      "id": 45,
       "type": {
         "def": {
           "primitive": "u32"
@@ -2046,7 +2237,7 @@
       }
     },
     {
-      "id": 42,
+      "id": 46,
       "type": {
         "def": {
           "variant": {}

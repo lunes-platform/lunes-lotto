@@ -36,6 +36,7 @@ pub mod lotto_lunes{
             instance.payable_lotto.next_id = 1;
             instance.payable_lotto.next_ticket_id =1;
             instance.payable_lotto.tx_lunes = 17;
+            instance.payable_lotto.total_accumulated_next = 0;
             instance.payable_lotto.rafflies = Default::default();
             instance.payable_lotto.tickets = Default::default();
             instance.payable_lotto.winners = Default::default();
