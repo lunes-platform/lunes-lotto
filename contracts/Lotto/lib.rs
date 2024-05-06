@@ -38,7 +38,7 @@ pub mod lotto_lunes{
             instance.payable_lotto.price = price;
             instance.payable_lotto.status = true;
             instance.payable_lotto.date_raffle = date_raffle;
-            instance.payable_lotto.total_accumulated_next = 0;
+            instance.payable_lotto.total_accumulated = 0;
             instance.payable_lotto.num_raffle = Mapping::default();
             instance.payable_lotto.players = Mapping::default();
             instance.payable_lotto.winners = Mapping::default();

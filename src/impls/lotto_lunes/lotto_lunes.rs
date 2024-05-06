@@ -54,9 +54,16 @@ pub trait LottoLunesImpl:
         }
         self.data::<Data>().next_id += 1;
         let total_accumulated_next = Self::env().transferred_value();
-        self.data::<Data>().total_accumulated_next += total_accumulated_next;
+        self.data::<Data>().total_accumulated += total_accumulated_next;
         self.data::<Data>().status = true;
         self.data::<Data>().price = price;
+        Ok(())
+    }
+    /// Add Value in the Total Accumulated
+    #[ink(message, payable)]
+    fn add_accumulated(&mut self) -> Result<(), ()> {
+        let accumulated = Self::env().transferred_value();
+        self.data::<Data>().total_accumulated += accumulated;
         Ok(())
     }
     /// Random Lotto
@@ -114,7 +121,7 @@ pub trait LottoLunesImpl:
             date_raffle: self.data::<Data>().date_raffle,
             status: self.data::<Data>().status,
             raffle_id: self.data::<Data>().next_id,
-            total_accumulated_next: self.data::<Data>().total_accumulated_next,
+            total_accumulated: self.data::<Data>().total_accumulated,
         })
     }
     //Get Numbers Deaws
@@ -236,6 +243,7 @@ pub trait LottoLunesImpl:
             return Err(PSP22Error::Custom(LunesError::NotAuthorized.as_str()));
         }
         let total_fee = lotto_win.fee_lunes;
+        let total_accumulated_next:Balance = lotto_win.total_accumulated_next;
         let id_ = lotto_win.raffle_id;
         let vec_win = vec![lotto_win];
         self.data::<Data>()
@@ -245,7 +253,7 @@ pub trait LottoLunesImpl:
         Self::env()
             .transfer(owner_, total_fee)
             .map_err(|_| PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))?;
-        self.data::<Data>().total_accumulated_next -= total_fee;
+        self.data::<Data>().total_accumulated = total_accumulated_next;
         Ok(())
     }
     //add account lotto

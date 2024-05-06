@@ -25,7 +25,7 @@ pub struct Data {
     pub num_raffle: Mapping<RaffleId,Vec<ListNumRaffle>>,
     pub winners: Mapping<RaffleId,Vec<LottoWin>>,
     pub tx_lunes: TxLunes,
-    pub total_accumulated_next: TotalAccumulated,
+    pub total_accumulated: TotalAccumulated,
 }
 
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
@@ -47,7 +47,7 @@ pub struct InfoContract {
     pub date_raffle: u64,
     pub status: Status,
     pub raffle_id: RaffleId,
-    pub total_accumulated_next: TotalAccumulated,
+    pub total_accumulated: TotalAccumulated,
 }
 #[derive(Debug, PartialEq,Clone, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -65,6 +65,8 @@ pub struct LottoWin{
     pub value_award_6: ValueAward,
     pub quantity_6: u64,
     pub fee_lunes: ValueAward,
+    pub total_accumulated: ValueAward,
+    pub total_accumulated_next: ValueAward,
 }
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]

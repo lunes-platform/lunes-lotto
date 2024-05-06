@@ -20,4 +20,6 @@ pub trait LottoLunes {
     fn change_tx(&mut self, new_tx: u64) -> Result<(), ()>;
     #[ink(message)]
     fn payment(&mut self, id_raffle: u64) -> Result<(), ()>;
+    #[ink(message)]
+    fn add_accumulated(&mut self) -> Result<(), ()> ;
 }
