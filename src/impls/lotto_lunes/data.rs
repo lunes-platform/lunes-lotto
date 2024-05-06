@@ -65,8 +65,8 @@ pub struct LottoWin{
     pub value_award_6: ValueAward,
     pub quantity_6: u64,
     pub fee_lunes: ValueAward,
-    pub total_accumulated: ValueAward,
-    pub total_accumulated_next: ValueAward,
+    pub total_accumulated: TotalAccumulated,
+    pub total_accumulated_next: TotalAccumulated,
 }
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
