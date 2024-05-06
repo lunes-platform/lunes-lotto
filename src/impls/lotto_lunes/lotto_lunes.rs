@@ -40,7 +40,6 @@ pub trait LottoLunesImpl:
     }
     /// Create Raffle with Date, Price and Total Accumulated
     #[ink(message, payable)]
-    #[openbrush::modifiers(only_owner)]
     fn create_raffle_lotto(&mut self, date_raffle: u64, price: Balance) -> Result<(), PSP22Error> {
         if self.data::<Data>().status {
             return Err(PSP22Error::Custom(LunesError::DrawNotFinish.as_str()));
@@ -48,6 +47,10 @@ pub trait LottoLunesImpl:
         let date_block = Self::env().block_timestamp();
         if date_block > date_raffle {
             return Err(PSP22Error::Custom(LunesError::NumInvalid.as_str()));
+        }
+        let caller = Self::env().caller();
+        if !self.data::<Data>().account_do_lotto.iter().any(|f| f == &caller){
+            return Err(PSP22Error::Custom(LunesError::NotAuthorized.as_str()));
         }
         self.data::<Data>().next_id += 1;
         let total_accumulated_next = Self::env().transferred_value();
@@ -242,6 +245,7 @@ pub trait LottoLunesImpl:
         Self::env()
             .transfer(owner_, total_fee)
             .map_err(|_| PSP22Error::Custom(LunesError::WithdrawalFailed.as_str()))?;
+        self.data::<Data>().total_accumulated_next -= total_fee;
         Ok(())
     }
     //add account lotto
