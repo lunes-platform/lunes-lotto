@@ -10,7 +10,7 @@ pub mod lotto_lunes{
         traits::Storage,
     };
     use lotto_lunes_pkg::impls::lotto_lunes::{lotto_lunes::*, data };
-
+    use ink::storage::Mapping;
     #[ink(storage)]
     #[derive(Default, Storage)]
     pub struct LottoLunesContract {
@@ -27,35 +27,24 @@ pub mod lotto_lunes{
 
     impl LottoLunesContract {
         #[ink(constructor)]
-        pub fn new() -> Self {
+        pub fn new(date_raffle: u64,price: Balance, tx_fee: u64) -> Self {
             let mut instance = Self::default();
             let caller = instance.env().caller();
             ownable::InternalImpl::_init_with_owner(&mut instance, caller);
 
             let mut instance = Self::default();
             instance.payable_lotto.next_id = 1;
-            instance.payable_lotto.next_ticket_id =1;
-            instance.payable_lotto.tx_lunes = 17;
+            instance.payable_lotto.tx_lunes = tx_fee;
+            instance.payable_lotto.price = price;
+            instance.payable_lotto.status = true;
+            instance.payable_lotto.date_raffle = date_raffle;
             instance.payable_lotto.total_accumulated_next = 0;
-            instance.payable_lotto.rafflies = Default::default();
-            instance.payable_lotto.tickets = Default::default();
-            instance.payable_lotto.winners = Default::default();
+            instance.payable_lotto.num_raffle = Mapping::default();
+            instance.payable_lotto.players = Mapping::default();
+            instance.payable_lotto.winners = Mapping::default();
+            instance.payable_lotto.account_do_lotto = Default::default();
             instance
         }
-    }
-    #[cfg(test)]
-    mod tests {
-        use super::*;
-        #[ink::test]
-        fn random_lotto() {
-            let mut contract = LottoLunesContract::new();           
-            assert!(contract.random_lotto().is_ok());    
-        }
-        #[ink::test]
-        fn create_automatic_lotto() {
-            let mut contract = LottoLunesContract::new();
-            assert!(contract.random_lotto().is_ok());
-        }
-    }
+    }    
   
 }
