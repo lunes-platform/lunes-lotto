@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x9fab15694be532adf9e617e2c56d55437a176fc8a9db03db30fd8e72a5e1834f",
+    "hash": "0x9fd46ecdc4c802ef20f762b4f922495bc96995a83548dd7ea6e0f889165ce4ef",
     "language": "ink! 4.2.1",
     "compiler": "rustc 1.74.1",
     "build_info": {
@@ -119,132 +119,6 @@
       {
         "args": [
           {
-            "label": "num_rifle",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "PlayLunesInput1"
-              ],
-              "type": 7
-            }
-          }
-        ],
-        "default": false,
-        "docs": [
-          " Payable in LUNES"
-        ],
-        "label": "LottoLunesImpl::play_lunes",
-        "mutates": true,
-        "payable": true,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 14
-        },
-        "selector": "0xc3e7705a"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "LottoLunesImpl::info_contract",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 18
-        },
-        "selector": "0xef464e02"
-      },
-      {
-        "args": [
-          {
-            "label": "id_raffle",
-            "type": {
-              "displayName": [
-                "lottolunesimpl_external",
-                "MyPlayPerRaffleInput1"
-              ],
-              "type": 4
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "LottoLunesImpl::my_play_per_raffle",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 21
-        },
-        "selector": "0x0b3dad10"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [
-          " Do Raffle in the date"
-        ],
-        "label": "LottoLunesImpl::do_raffle_lotto",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 23
-        },
-        "selector": "0x18c61709"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [
-          " Add Value in the Total Accumulated"
-        ],
-        "label": "LottoLunesImpl::add_accumulated",
-        "mutates": true,
-        "payable": true,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0x637e6bb2"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [
-          " Random Lotto"
-        ],
-        "label": "LottoLunesImpl::random_lotto",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 23
-        },
-        "selector": "0x1547d912"
-      },
-      {
-        "args": [
-          {
             "label": "date_raffle",
             "type": {
               "displayName": [
@@ -280,6 +154,96 @@
           "type": 14
         },
         "selector": "0xe7f0d536"
+      },
+      {
+        "args": [
+          {
+            "label": "account",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "AddAccountLottoInput1"
+              ],
+              "type": 1
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "LottoLunesImpl::add_account_lotto",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 14
+        },
+        "selector": "0x7d7e00be"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [
+          " Do Raffle in the date"
+        ],
+        "label": "LottoLunesImpl::do_raffle_lotto",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0x18c61709"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [
+          " Random Lotto"
+        ],
+        "label": "LottoLunesImpl::random_lotto",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 18
+        },
+        "selector": "0x1547d912"
+      },
+      {
+        "args": [
+          {
+            "label": "id_raffle",
+            "type": {
+              "displayName": [
+                "lottolunesimpl_external",
+                "MyPlayPerRaffleInput1"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "LottoLunesImpl::my_play_per_raffle",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 21
+        },
+        "selector": "0x0b3dad10"
       },
       {
         "args": [
@@ -334,6 +298,24 @@
           "type": 21
         },
         "selector": "0x2fdb049b"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [
+          " Add Value in the Total Accumulated"
+        ],
+        "label": "LottoLunesImpl::add_accumulated",
+        "mutates": true,
+        "payable": true,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 23
+        },
+        "selector": "0x637e6bb2"
       },
       {
         "args": [
@@ -392,21 +374,23 @@
       {
         "args": [
           {
-            "label": "account",
+            "label": "num_rifle",
             "type": {
               "displayName": [
                 "lottolunesimpl_external",
-                "AddAccountLottoInput1"
+                "PlayLunesInput1"
               ],
-              "type": 1
+              "type": 7
             }
           }
         ],
         "default": false,
-        "docs": [],
-        "label": "LottoLunesImpl::add_account_lotto",
+        "docs": [
+          " Payable in LUNES"
+        ],
+        "label": "LottoLunesImpl::play_lunes",
         "mutates": true,
-        "payable": false,
+        "payable": true,
         "returnType": {
           "displayName": [
             "ink",
@@ -414,7 +398,39 @@
           ],
           "type": 14
         },
-        "selector": "0x7d7e00be"
+        "selector": "0xc3e7705a"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "LottoLunesImpl::info_contract",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 25
+        },
+        "selector": "0xef464e02"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::renounce_ownership",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0x5e228753"
       },
       {
         "args": [
@@ -442,22 +458,6 @@
           "type": 28
         },
         "selector": "0x11f43efd"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "Ownable::renounce_ownership",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 28
-        },
-        "selector": "0x5e228753"
       },
       {
         "args": [],
@@ -898,12 +898,12 @@
               {
                 "name": "total_accumulated",
                 "type": 5,
-                "typeName": "ValueAward"
+                "typeName": "TotalAccumulated"
               },
               {
                 "name": "total_accumulated_next",
                 "type": 5,
-                "typeName": "ValueAward"
+                "typeName": "TotalAccumulated"
               }
             ]
           }
@@ -1192,7 +1192,7 @@
               {
                 "fields": [
                   {
-                    "type": 12
+                    "type": 16
                   }
                 ],
                 "index": 1,
@@ -1208,7 +1208,7 @@
           },
           {
             "name": "E",
-            "type": 12
+            "type": 16
           }
         ],
         "path": [
@@ -1220,43 +1220,10 @@
       "id": 20,
       "type": {
         "def": {
-          "composite": {
-            "fields": [
-              {
-                "name": "tx_lunes",
-                "type": 4,
-                "typeName": "u64"
-              },
-              {
-                "name": "date_raffle",
-                "type": 4,
-                "typeName": "u64"
-              },
-              {
-                "name": "status",
-                "type": 6,
-                "typeName": "Status"
-              },
-              {
-                "name": "raffle_id",
-                "type": 4,
-                "typeName": "RaffleId"
-              },
-              {
-                "name": "total_accumulated",
-                "type": 5,
-                "typeName": "TotalAccumulated"
-              }
-            ]
+          "sequence": {
+            "type": 4
           }
-        },
-        "path": [
-          "lotto_lunes_pkg",
-          "impls",
-          "lotto_lunes",
-          "data",
-          "InfoContract"
-        ]
+        }
       }
     },
     {
@@ -1394,7 +1361,7 @@
               {
                 "fields": [
                   {
-                    "type": 25
+                    "type": 12
                   }
                 ],
                 "index": 0,
@@ -1403,7 +1370,7 @@
               {
                 "fields": [
                   {
-                    "type": 16
+                    "type": 12
                   }
                 ],
                 "index": 1,
@@ -1415,11 +1382,11 @@
         "params": [
           {
             "name": "T",
-            "type": 25
+            "type": 12
           },
           {
             "name": "E",
-            "type": 16
+            "type": 12
           }
         ],
         "path": [
@@ -1431,22 +1398,12 @@
       "id": 25,
       "type": {
         "def": {
-          "sequence": {
-            "type": 4
-          }
-        }
-      }
-    },
-    {
-      "id": 26,
-      "type": {
-        "def": {
           "variant": {
             "variants": [
               {
                 "fields": [
                   {
-                    "type": 27
+                    "type": 26
                   }
                 ],
                 "index": 0,
@@ -1467,7 +1424,7 @@
         "params": [
           {
             "name": "T",
-            "type": 27
+            "type": 26
           },
           {
             "name": "E",
@@ -1480,7 +1437,7 @@
       }
     },
     {
-      "id": 27,
+      "id": 26,
       "type": {
         "def": {
           "variant": {
@@ -1488,7 +1445,7 @@
               {
                 "fields": [
                   {
-                    "type": 12
+                    "type": 27
                   }
                 ],
                 "index": 0,
@@ -1509,7 +1466,7 @@
         "params": [
           {
             "name": "T",
-            "type": 12
+            "type": 27
           },
           {
             "name": "E",
@@ -1518,6 +1475,49 @@
         ],
         "path": [
           "Result"
+        ]
+      }
+    },
+    {
+      "id": 27,
+      "type": {
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "tx_lunes",
+                "type": 4,
+                "typeName": "u64"
+              },
+              {
+                "name": "date_raffle",
+                "type": 4,
+                "typeName": "u64"
+              },
+              {
+                "name": "status",
+                "type": 6,
+                "typeName": "Status"
+              },
+              {
+                "name": "raffle_id",
+                "type": 4,
+                "typeName": "RaffleId"
+              },
+              {
+                "name": "total_accumulated",
+                "type": 5,
+                "typeName": "TotalAccumulated"
+              }
+            ]
+          }
+        },
+        "path": [
+          "lotto_lunes_pkg",
+          "impls",
+          "lotto_lunes",
+          "data",
+          "InfoContract"
         ]
       }
     },
