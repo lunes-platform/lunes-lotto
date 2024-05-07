@@ -46,6 +46,7 @@ pub struct InfoContract {
     pub tx_lunes: u64,
     pub date_raffle: u64,
     pub status: Status,
+    pub price: Price,
     pub raffle_id: RaffleId,
     pub total_accumulated: TotalAccumulated,
 }

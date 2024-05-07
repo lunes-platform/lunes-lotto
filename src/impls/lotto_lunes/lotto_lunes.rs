@@ -122,6 +122,7 @@ pub trait LottoLunesImpl:
             status: self.data::<Data>().status,
             raffle_id: self.data::<Data>().next_id,
             total_accumulated: self.data::<Data>().total_accumulated,
+            price: self.data::<Data>().price,
         })
     }
     //Get Numbers Deaws
