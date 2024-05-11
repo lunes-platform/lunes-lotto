@@ -84,6 +84,7 @@ pub enum LunesError {
     PaymentExpired,
     DrawNotFinish,
     NotAuthorized,
+    NotFound,
 }
 
 impl LunesError {
@@ -101,6 +102,7 @@ impl LunesError {
             LunesError::RaffleNotActive => String::from("RaffleNotActive"),
             LunesError::PaymentExpired => String::from("PaymentExpired"),
             LunesError::NotAuthorized => String::from("NotAuthorized"),
+            LunesError::NotFound=> String::from("NotFound"),
             
         }
     }

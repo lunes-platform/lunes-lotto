@@ -21,6 +21,9 @@ pub trait LottoLunesImpl:
     #[ink(message, payable)]
     #[modifiers(non_reentrant)]
     fn play_lunes(&mut self, num_rifle: Vec<ListNumRaffle>) -> Result<(), PSP22Error> {
+        if !self.data::<Data>().status {
+            return Err(PSP22Error::Custom(LunesError::DrawNotStarted.as_str()));
+        }
         let caller = Self::env().caller();
         let value_pay = Self::env().transferred_value();
         self.check_amount(value_pay, num_rifle.clone())?;
@@ -29,6 +32,8 @@ pub trait LottoLunesImpl:
         let price_total = self.data::<Data>().price * (num_rifle.len() as u128);
 
         let tx_lunes = (value_pay - price_total) as Balance;
+        
+        self.data::<Data>().total_accumulated += price_total;
 
         let owner = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
         Self::env()
@@ -49,12 +54,18 @@ pub trait LottoLunesImpl:
             return Err(PSP22Error::Custom(LunesError::NumInvalid.as_str()));
         }
         let caller = Self::env().caller();
-        if !self.data::<Data>().account_do_lotto.iter().any(|f| f == &caller){
+        if !self
+            .data::<Data>()
+            .account_do_lotto
+            .iter()
+            .any(|f| f == &caller)
+        {
             return Err(PSP22Error::Custom(LunesError::NotAuthorized.as_str()));
         }
         self.data::<Data>().next_id += 1;
         let total_accumulated_next = Self::env().transferred_value();
         self.data::<Data>().total_accumulated += total_accumulated_next;
+        self.data::<Data>().date_raffle = date_raffle;
         self.data::<Data>().status = true;
         self.data::<Data>().price = price;
         Ok(())
@@ -129,16 +140,40 @@ pub trait LottoLunesImpl:
     #[ink(message)]
     fn draw_num_raffle(&mut self, id_raffle: u64) -> Result<Vec<ListNumRaffle>, PSP22Error> {
         let number = self.data::<Data>().num_raffle.get(id_raffle);
+        if !number.is_some() {
+            return Err(PSP22Error::Custom(LunesError::NotFound.as_str()));
+        }
         Ok(number.unwrap())
     }
-    //Chage Tax Lunes
+    //List Ticket 
     #[ink(message)]
     fn my_play_per_raffle(&mut self, id_raffle: u64) -> Result<Vec<ListNumRaffle>, PSP22Error> {
         let caller = Self::env().caller();
         let games = self.data::<Data>().players.get((caller, id_raffle));
+        if !games.is_some() {
+            return Err(PSP22Error::Custom(LunesError::NotFound.as_str()));
+        }
         Ok(games.unwrap())
     }
-
+    //List Tikey
+    #[ink(message)]
+    fn my_play_per_raffle_auth(&mut self,account_id: AccountId, id_raffle: u64) -> Result<Vec<ListNumRaffle>, PSP22Error> {
+        let caller = Self::env().caller();
+        if !self
+            .data::<Data>()
+            .account_do_lotto
+            .iter()
+            .any(|f| f == &caller)
+        {
+            return Err(PSP22Error::Custom(LunesError::NotAuthorized.as_str()));
+        }
+        let games = self.data::<Data>().players.get((account_id, id_raffle));
+        if !games.is_some() {
+            return Err(PSP22Error::Custom(LunesError::NotFound.as_str()));
+        }
+        Ok(games.unwrap())
+    }
+    //Payment player in Raffle
     #[ink(message)]
     fn payment(&mut self, id_raffle: u64) -> Result<(), PSP22Error> {
         let dranws = self.data::<Data>().winners.get(id_raffle);
@@ -153,13 +188,17 @@ pub trait LottoLunesImpl:
                 num_raffle[0].num_6,
             ];
             let caller = Self::env().caller();
-            let games = self.data::<Data>().players.get((caller, id_raffle)).unwrap();
+            let games = self
+                .data::<Data>()
+                .players
+                .get((caller, id_raffle))
+                .unwrap();
             let mut total_per_pay_2: Balance = 0;
             let mut total_per_pay_3: Balance = 0;
             let mut total_per_pay_4: Balance = 0;
             let mut total_per_pay_5: Balance = 0;
             let mut total_per_pay_6: Balance = 0;
-            let mut vec_mut: Vec<ListNumRaffle> =  Vec::new();
+            let mut vec_mut: Vec<ListNumRaffle> = Vec::new();
             let item_d = dranws.unwrap();
             for g in games {
                 let mut game_mut = g;
@@ -167,7 +206,12 @@ pub trait LottoLunesImpl:
                     continue;
                 }
                 let vet_num_player = vec![
-                    game_mut.num_1, game_mut.num_2, game_mut.num_3, game_mut.num_4, game_mut.num_5, game_mut.num_6
+                    game_mut.num_1,
+                    game_mut.num_2,
+                    game_mut.num_3,
+                    game_mut.num_4,
+                    game_mut.num_5,
+                    game_mut.num_6,
                 ];
                 let matching_numbers = vet_num_player
                     .iter()
@@ -221,7 +265,9 @@ pub trait LottoLunesImpl:
             }
             if value_award_total != 0 {
                 self.data::<Data>().players.remove((caller, id_raffle));
-                self.data::<Data>().players.insert((caller, id_raffle), &vec_mut);
+                self.data::<Data>()
+                    .players
+                    .insert((caller, id_raffle), &vec_mut);
                 let owner_ = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
                 Self::env()
                     .transfer(owner_, value_award_total)
@@ -237,19 +283,22 @@ pub trait LottoLunesImpl:
     #[modifiers(non_reentrant)]
     fn pre_payment_lotto(&mut self, lotto_win: LottoWin) -> Result<(), PSP22Error> {
         let caller = Self::env().caller();
-        if !self.data::<Data>().account_do_lotto.iter().any(|f| f == &caller){
+        if !self
+            .data::<Data>()
+            .account_do_lotto
+            .iter()
+            .any(|f| f == &caller)
+        {
             return Err(PSP22Error::Custom(LunesError::NotAuthorized.as_str()));
         }
         if lotto_win.raffle_id == 0 {
             return Err(PSP22Error::Custom(LunesError::NotAuthorized.as_str()));
         }
         let total_fee = lotto_win.fee_lunes;
-        let total_accumulated_next:Balance = lotto_win.total_accumulated_next;
+        let total_accumulated_next: Balance = lotto_win.total_accumulated_next;
         let id_ = lotto_win.raffle_id;
         let vec_win = vec![lotto_win];
-        self.data::<Data>()
-            .winners
-            .insert(id_, &vec_win);
+        self.data::<Data>().winners.insert(id_, &vec_win);
         let owner_ = self.data::<ownable::Data>().owner.get().unwrap().unwrap();
         Self::env()
             .transfer(owner_, total_fee)
